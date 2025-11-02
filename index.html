@@ -277,6 +277,168 @@
             margin-top:6px;
             opacity:0.9;
         }
+        
+        /* 魔法阵容器 */
+        .magic-circle-container{
+            position:relative;
+            margin:24px 0;
+            padding:24px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            min-height:180px;
+        }
+        
+        .magic-circle{
+            position:relative;
+            width:120px;
+            height:120px;
+            margin-bottom:16px;
+        }
+        
+        /* 外层圆环 */
+        .magic-circle::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            border:2px solid rgba(138,180,255,0.3);
+            border-radius:50%;
+            box-shadow:0 0 20px rgba(138,180,255,0.2),
+                       inset 0 0 20px rgba(243,168,255,0.1);
+        }
+        
+        /* 内层圆环 */
+        .magic-circle::after{
+            content:'';
+            position:absolute;
+            inset:15px;
+            border:1px solid rgba(243,168,255,0.25);
+            border-radius:50%;
+            box-shadow:0 0 15px rgba(243,168,255,0.15);
+        }
+        
+        /* 三角形容器 - 外层 */
+        .triangle-ring-outer{
+            position:absolute;
+            inset:0;
+            animation:rotate-slow 30s linear infinite;
+        }
+        
+        /* 三角形容器 - 内层（反向旋转） */
+        .triangle-ring-inner{
+            position:absolute;
+            inset:20px;
+            animation:rotate-slow-reverse 25s linear infinite;
+        }
+        
+        @keyframes rotate-slow{
+            0%{ transform:rotate(0deg); }
+            100%{ transform:rotate(360deg); }
+        }
+        
+        @keyframes rotate-slow-reverse{
+            0%{ transform:rotate(360deg); }
+            100%{ transform:rotate(0deg); }
+        }
+        
+        /* 等边三角形 */
+        .magic-triangle{
+            position:absolute;
+            width:0;
+            height:0;
+            border-left:8px solid transparent;
+            border-right:8px solid transparent;
+            border-bottom:14px solid rgba(138,180,255,0.5);
+            filter:drop-shadow(0 0 4px rgba(138,180,255,0.6));
+            left:50%;
+            top:50%;
+            transform-origin:0 -45px;
+        }
+        
+        /* 外层三角形 - 8个 */
+        .triangle-ring-outer .magic-triangle:nth-child(1){
+            transform:translate(-50%, -50%) rotate(0deg);
+        }
+        .triangle-ring-outer .magic-triangle:nth-child(2){
+            transform:translate(-50%, -50%) rotate(45deg);
+        }
+        .triangle-ring-outer .magic-triangle:nth-child(3){
+            transform:translate(-50%, -50%) rotate(90deg);
+        }
+        .triangle-ring-outer .magic-triangle:nth-child(4){
+            transform:translate(-50%, -50%) rotate(135deg);
+        }
+        .triangle-ring-outer .magic-triangle:nth-child(5){
+            transform:translate(-50%, -50%) rotate(180deg);
+        }
+        .triangle-ring-outer .magic-triangle:nth-child(6){
+            transform:translate(-50%, -50%) rotate(225deg);
+        }
+        .triangle-ring-outer .magic-triangle:nth-child(7){
+            transform:translate(-50%, -50%) rotate(270deg);
+        }
+        .triangle-ring-outer .magic-triangle:nth-child(8){
+            transform:translate(-50%, -50%) rotate(315deg);
+        }
+        
+        /* 内层三角形 - 6个，稍微小一些 */
+        .triangle-ring-inner .magic-triangle{
+            border-left:6px solid transparent;
+            border-right:6px solid transparent;
+            border-bottom:10px solid rgba(243,168,255,0.5);
+            filter:drop-shadow(0 0 3px rgba(243,168,255,0.6));
+            transform-origin:0 -35px;
+        }
+        .triangle-ring-inner .magic-triangle:nth-child(1){
+            transform:translate(-50%, -50%) rotate(0deg);
+        }
+        .triangle-ring-inner .magic-triangle:nth-child(2){
+            transform:translate(-50%, -50%) rotate(60deg);
+        }
+        .triangle-ring-inner .magic-triangle:nth-child(3){
+            transform:translate(-50%, -50%) rotate(120deg);
+        }
+        .triangle-ring-inner .magic-triangle:nth-child(4){
+            transform:translate(-50%, -50%) rotate(180deg);
+        }
+        .triangle-ring-inner .magic-triangle:nth-child(5){
+            transform:translate(-50%, -50%) rotate(240deg);
+        }
+        .triangle-ring-inner .magic-triangle:nth-child(6){
+            transform:translate(-50%, -50%) rotate(300deg);
+        }
+        
+        /* 中心装饰点 */
+        .magic-center{
+            position:absolute;
+            left:50%;
+            top:50%;
+            transform:translate(-50%, -50%);
+            width:8px;
+            height:8px;
+            border-radius:50%;
+            background:radial-gradient(circle, rgba(138,180,255,0.9), rgba(243,168,255,0.6));
+            box-shadow:0 0 15px rgba(138,180,255,0.8),
+                       0 0 25px rgba(243,168,255,0.5);
+            z-index:10;
+        }
+        
+        /* 魔法阵文字 */
+        .magic-text{
+            position:relative;
+            z-index:1;
+            font-size:13px;
+            color:var(--text);
+            font-weight:600;
+            text-align:center;
+            line-height:1.6;
+            margin-top:8px;
+            background:linear-gradient(90deg, var(--text), var(--accent));
+            -webkit-background-clip:text;
+            background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
 
         /* 右侧主要内容 */
         .main{
@@ -482,6 +644,17 @@
             .time-value{ font-size:20px; }
             .time-label{ font-size:11px; }
             .date-value{ font-size:12px; }
+            .magic-circle-container{ margin:20px 0; padding:16px; min-height:160px; }
+            .magic-circle{ width:100px; height:100px; }
+            .magic-text{ font-size:12px; margin-top:12px; }
+            .triangle-ring-inner{ inset:16px; }
+            .magic-triangle{ border-left-width:6px; border-right-width:6px; border-bottom-width:12px; }
+            .triangle-ring-inner .magic-triangle{ 
+                border-left-width:5px; 
+                border-right-width:5px; 
+                border-bottom-width:8px; 
+                transform-origin:0 -28px;
+            }
             .actions{ flex-direction:column; }
             .btn{ width:100%; justify-content:center; }
         }
@@ -549,6 +722,34 @@
                 <div class="time-value" id="currentTime">00:00:00</div>
                 <div class="date-value" id="currentDate">2024-01-01</div>
             </div>
+        </div>
+
+        <!-- 魔法阵效果 -->
+        <div class="magic-circle-container">
+            <div class="magic-circle">
+                <div class="magic-center"></div>
+                <!-- 外层三角形 -->
+                <div class="triangle-ring-outer">
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                </div>
+                <!-- 内层三角形 -->
+                <div class="triangle-ring-inner">
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                    <div class="magic-triangle"></div>
+                </div>
+            </div>
+            <div class="magic-text">祝你拥有美好的一天</div>
         </div>
 
         <div class="footer">
@@ -624,24 +825,24 @@
                     <li>秋天的枫叶</li>
                     <li>冬天的温暖</li>
                 </ul>
-                <p style="margin-top:8px; color:var(--muted); font-size:14px;">表达：对美好景色的向往，最喜欢了。</p>
+                <p style="margin-top:8px; color:var(--muted); font-size:14px;">对美好景色的向往，最喜欢了。</p>
             </article>
 
             <article class="panel" id="quotes" title="语录与思考">
                 <h3>片段语录</h3>
                 <div class="quotes" style="margin-top:8px;">
                     <div class="quote-item">
-                        <strong>语录 1</strong>
+                        <strong>关于成长</strong>
                         在你降临世上的那一天；太阳接受了行星的问候，你随即永恒地遵循着，让你出世的法则茁壮成长，你就是你，你无法逃脱你自己，师贝尔和先知已经这样说过；时间，力量都不能打碎，那既成的、已成活的形体。
                     </div>
 
                     <div class="quote-item">
-                        <strong>语录 2</strong>
+                        <strong>关于幸福</strong>
                         无论身在何处，我们只能在我们自身寻找或者获得幸福。
                     </div>
 
                     <div class="quote-item">
-                        <strong>语录 3</strong>
+                        <strong>关于本心</strong>
                         一切诸法皆如幻，本性自空那用除。若识心性非形象，湛然不动自真如。
                     </div>
                 </div>
