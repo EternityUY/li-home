@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3a8ff"/>
+      <stop offset="50%" style="stop-color:#c084fc"/>
+      <stop offset="100%" style="stop-color:#8ab4ff"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f9a8d4"/>
+      <stop offset="100%" style="stop-color:#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <!-- 背景圆 -->
+  <circle cx="50" cy="50" r="48" fill="#0f0f2e" stroke="url(#grad)" stroke-width="2"/>
+  <!-- 发光光晕 -->
+  <circle cx="50" cy="50" r="38" fill="url(#grad)" opacity="0.08"/>
+  <!-- 樱花 - 五片花瓣 -->
+  <!-- 右上花瓣 -->
+  <path d="M50 22 C52 28, 58 32, 62 30 C64 28, 64 24, 60 20 C56 16, 50 16, 50 22Z" fill="url(#grad)" opacity="0.95"/>
+  <!-- 左上花瓣 -->
+  <path d="M50 22 C48 28, 42 32, 38 30 C36 28, 36 24, 40 20 C44 16, 50 16, 50 22Z" fill="url(#grad2)" opacity="0.9"/>
+  <!-- 右花瓣 -->
+  <path d="M68 40 C64 42, 62 48, 64 52 C66 54, 70 54, 72 50 C74 46, 72 40, 68 40Z" fill="url(#grad)" opacity="0.85"/>
+  <!-- 左花瓣 -->
+  <path d="M32 40 C36 42, 38 48, 36 52 C34 54, 30 54, 28 50 C26 46, 28 40, 32 40Z" fill="url(#grad2)" opacity="0.85"/>
+  <!-- 下花瓣 -->
+  <path d="M50 72 C48 66, 42 64, 38 66 C36 68, 36 72, 40 76 C44 80, 50 80, 50 72Z" fill="url(#grad)" opacity="0.9"/>
+  <!-- 花蕊 -->
+  <circle cx="50" cy="48" r="5" fill="#fce7f3" opacity="0.9"/>
+  <circle cx="50" cy="48" r="3" fill="#f9a8d4"/>
+  <!-- 光点 -->
+  <circle cx="50" cy="48" r="1.5" fill="#fff" opacity="0.8"/>
+</svg>
