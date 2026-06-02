@@ -6,6 +6,7 @@
     <title>li — 记录我喜欢的世界</title>
     <link rel="icon" href="./assets/favicon.ico" />
     <style>
+        /* ========== 基础 ========== */
         :root{
             --bg-overlay: rgba(6,10,20,0.56);
             --card-bg: rgba(255,255,255,0.03);
@@ -17,35 +18,56 @@
             --radius: 14px;
             --maxwidth: 1160px;
         }
-        *{box-sizing:border-box}
-        html,body{height:100%}
+        *{box-sizing:border-box; margin:0; padding:0;}
+        html{
+            scroll-behavior:smooth;
+            scroll-snap-type:y mandatory;
+        }
         body{
-            margin:0;
             font-family: "Inter", "PingFang SC", "Hiragino Sans GB", "Segoe UI", Roboto, Arial, sans-serif;
-            background: url('./assets/bg.jpg') center center / cover no-repeat fixed;
-            background-color: #071029;
+            background: #071029;
             color:var(--text);
-            display:flex;
-            align-items:flex-start;
-            justify-content:center;
-            padding:40px 20px;
-            min-height:100vh;
             -webkit-font-smoothing:antialiased;
             -moz-osx-font-smoothing:grayscale;
-            position:relative;
             overflow-x:hidden;
         }
-        
-        body::before{
-            content:'';
-            position:fixed;
-            inset:0;
-            background: linear-gradient(180deg, rgba(7,16,41,0.4) 0%, rgba(7,18,42,0.3) 40%, rgba(5,23,40,0.5) 100%);
-            z-index:0;
-            pointer-events:none;
+
+        /* ========== 公用的全屏段 ========== */
+        .section{
+            min-height:100vh;
+            width:100%;
+            position:relative;
+            scroll-snap-align:start;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:40px 20px;
         }
 
-        /* 容器 */
+        /* ========== Section 1 — Hero ========== */
+        .hero-section{
+            background: url('./assets/bg.jpg') center center / cover no-repeat fixed;
+            background-color: #071029;
+            position:relative;
+        }
+        .hero-section::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            background: linear-gradient(180deg, rgba(7,16,41,0.55) 0%, rgba(7,18,42,0.45) 40%, rgba(5,23,40,0.6) 100%);
+            z-index:0;
+        }
+        .hero-section .bg-slot{
+            position:absolute;
+            inset:0;
+            z-index:0;
+            pointer-events:none;
+            background-image:
+                radial-gradient(circle at 12% 15%, rgba(132,94,255,0.08), transparent 5%),
+                radial-gradient(circle at 88% 80%, rgba(138,180,255,0.06), transparent 6%);
+            mix-blend-mode:overlay;
+        }
+
         .wrap{
             width:100%;
             max-width:var(--maxwidth);
@@ -56,38 +78,22 @@
             border-radius:20px;
             position:relative;
             z-index:2;
-            overflow:visible;
             background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
             border:1px solid rgba(255,255,255,0.03);
             box-shadow: 0 18px 50px rgba(2,6,23,0.65);
-            margin:20px auto 40px;
+            margin:20px auto;
         }
 
-        /* 背景装饰层 */
-        .bg-slot{
-            position:absolute;
-            inset:0;
-            z-index:0;
-            pointer-events:none;
-            background-image:
-                    radial-gradient(circle at 12% 15%, rgba(132,94,255,0.06), transparent 5%),
-                    radial-gradient(circle at 88% 80%, rgba(138,180,255,0.04), transparent 6%);
-            mix-blend-mode:overlay;
-            opacity:0.98;
-        }
-        
-        /* 樱花雨容器 */
+        /* 樱花雨 — 覆盖全页面 */
         .sakura-container{
             position:fixed;
-            top:0;
-            left:0;
+            top:0; left:0;
             width:100%;
             height:100%;
             pointer-events:none;
-            z-index:1;
+            z-index:999;
             overflow:hidden;
         }
-        
         .sakura{
             position:absolute;
             background:radial-gradient(circle, rgba(255,182,193,0.9), rgba(255,192,203,0.7));
@@ -97,33 +103,16 @@
             animation:fall linear infinite;
             filter:blur(0.5px);
         }
-        
-        /* 不同大小的樱花 */
         .sakura:nth-child(odd){ width:10px; height:10px; }
         .sakura:nth-child(even){ width:14px; height:14px; }
         .sakura:nth-child(3n){ width:12px; height:12px; }
         .sakura:nth-child(5n){ width:16px; height:16px; opacity:0.6; }
-        
         @keyframes fall{
-            0%{
-                transform:translateY(-10vh) translateX(0) rotate(0deg);
-                opacity:0.8;
-            }
-            50%{
-                transform:translateY(50vh) translateX(20px) rotate(360deg);
-            }
-            100%{
-                transform:translateY(110vh) translateX(40px) rotate(720deg);
-                opacity:0;
-            }
+            0%{ transform:translateY(-10vh) translateX(0) rotate(0deg); opacity:0.8; }
+            50%{ transform:translateY(50vh) translateX(20px) rotate(360deg); }
+            100%{ transform:translateY(110vh) translateX(40px) rotate(720deg); opacity:0; }
         }
-        
-        /* 左侧樱花 - 随机分布和动画 */
-        .sakura-left{
-            left:5%;
-            animation-duration:15s;
-            animation-delay:0s;
-        }
+        .sakura-left{ left:5%; animation-duration:15s; animation-delay:0s; }
         .sakura-left:nth-child(1){ left:8%; animation-duration:18s; animation-delay:0s; }
         .sakura-left:nth-child(2){ left:12%; animation-duration:20s; animation-delay:2s; }
         .sakura-left:nth-child(3){ left:6%; animation-duration:16s; animation-delay:4s; }
@@ -132,13 +121,7 @@
         .sakura-left:nth-child(6){ left:11%; animation-duration:19s; animation-delay:10s; }
         .sakura-left:nth-child(7){ left:9%; animation-duration:21s; animation-delay:12s; }
         .sakura-left:nth-child(8){ left:5%; animation-duration:15s; animation-delay:14s; }
-        
-        /* 右侧樱花 - 随机分布和动画 */
-        .sakura-right{
-            right:5%;
-            animation-duration:16s;
-            animation-delay:1s;
-        }
+        .sakura-right{ right:5%; animation-duration:16s; animation-delay:1s; }
         .sakura-right:nth-child(1){ right:8%; animation-duration:19s; animation-delay:1s; }
         .sakura-right:nth-child(2){ right:12%; animation-duration:21s; animation-delay:3s; }
         .sakura-right:nth-child(3){ right:6%; animation-duration:17s; animation-delay:5s; }
@@ -161,13 +144,11 @@
             gap:16px;
             backdrop-filter: blur(6px);
         }
-
         .avatar-wrap{
             display:flex;
             gap:16px;
             align-items:center;
         }
-
         .avatar{
             width:124px;
             height:124px;
@@ -187,9 +168,7 @@
             position:relative;
         }
         .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
-
         .avatar:hover{ transform:translateY(-6px) rotate(-1deg) scale(1.03); box-shadow: 0 28px 64px rgba(2,6,23,0.6); }
-
         .intro{ min-width:0; }
         .name{ margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px; }
         .subtitle{ margin:6px 0 12px 0; color:var(--muted); font-size:13px; line-height:1.4; }
@@ -200,7 +179,6 @@
             background: linear-gradient(90deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));
             border:1px solid rgba(255,255,255,0.02);
         }
-
         .actions{ display:flex; gap:10px; margin-top:8px; }
         .btn{
             display:inline-flex; align-items:center; gap:8px;
@@ -216,10 +194,9 @@
             border:1px solid rgba(138,180,255,0.14);
             color:#eaf4ff;
         }
-
         .meta{ color:var(--muted); font-size:14px; line-height:1.5; }
-        
-        /* 时间容器 - 带流光效果 */
+
+        /* 时间容器 */
         .time-container{
             position:relative;
             padding:20px;
@@ -233,12 +210,10 @@
         .time-container::before{
             content:'';
             position:absolute;
-            top:0;
-            left:-100%;
-            width:100%;
-            height:100%;
-            background:linear-gradient(90deg, 
-                transparent 0%, 
+            top:0; left:-100%;
+            width:100%; height:100%;
+            background:linear-gradient(90deg,
+                transparent 0%,
                 rgba(138,180,255,0.15) 30%,
                 rgba(243,168,255,0.15) 50%,
                 rgba(138,180,255,0.15) 70%,
@@ -251,34 +226,18 @@
             50%{ left:100%; }
             100%{ left:100%; }
         }
-        .time-display-main{
-            position:relative;
-            z-index:1;
-        }
-        .time-label{
-            font-size:12px;
-            color:var(--muted);
-            margin-bottom:8px;
-            opacity:0.8;
-        }
+        .time-display-main{ position:relative; z-index:1; }
+        .time-label{ font-size:12px; color:var(--muted); margin-bottom:8px; opacity:0.8; }
         .time-value{
-            font-size:24px;
-            font-weight:700;
-            color:var(--text);
+            font-size:24px; font-weight:700; color:var(--text);
             background:linear-gradient(90deg, var(--text), var(--accent));
-            -webkit-background-clip:text;
-            background-clip:text;
+            -webkit-background-clip:text; background-clip:text;
             -webkit-text-fill-color:transparent;
             letter-spacing:1px;
         }
-        .date-value{
-            font-size:13px;
-            color:var(--muted);
-            margin-top:6px;
-            opacity:0.9;
-        }
-        
-        /* 魔法阵容器 */
+        .date-value{ font-size:13px; color:var(--muted); margin-top:6px; opacity:0.9; }
+
+        /* 魔法阵 */
         .magic-circle-container{
             position:relative;
             margin:24px 0;
@@ -289,26 +248,20 @@
             align-items:center;
             min-height:180px;
         }
-        
         .magic-circle{
             position:relative;
             width:120px;
             height:120px;
             margin-bottom:16px;
         }
-        
-        /* 外层圆环 */
         .magic-circle::before{
             content:'';
             position:absolute;
             inset:0;
             border:2px solid rgba(138,180,255,0.3);
             border-radius:50%;
-            box-shadow:0 0 20px rgba(138,180,255,0.2),
-                       inset 0 0 20px rgba(243,168,255,0.1);
+            box-shadow:0 0 20px rgba(138,180,255,0.2), inset 0 0 20px rgba(243,168,255,0.1);
         }
-        
-        /* 内层圆环 */
         .magic-circle::after{
             content:'';
             position:absolute;
@@ -317,72 +270,36 @@
             border-radius:50%;
             box-shadow:0 0 15px rgba(243,168,255,0.15);
         }
-        
-        /* 三角形容器 - 外层 */
         .triangle-ring-outer{
             position:absolute;
             inset:0;
             animation:rotate-slow 30s linear infinite;
         }
-        
-        /* 三角形容器 - 内层（反向旋转） */
         .triangle-ring-inner{
             position:absolute;
             inset:20px;
             animation:rotate-slow-reverse 25s linear infinite;
         }
-        
-        @keyframes rotate-slow{
-            0%{ transform:rotate(0deg); }
-            100%{ transform:rotate(360deg); }
-        }
-        
-        @keyframes rotate-slow-reverse{
-            0%{ transform:rotate(360deg); }
-            100%{ transform:rotate(0deg); }
-        }
-        
-        /* 等边三角形 */
+        @keyframes rotate-slow{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
+        @keyframes rotate-slow-reverse{ 0%{ transform:rotate(360deg); } 100%{ transform:rotate(0deg); } }
         .magic-triangle{
             position:absolute;
-            width:0;
-            height:0;
+            width:0; height:0;
             border-left:8px solid transparent;
             border-right:8px solid transparent;
             border-bottom:14px solid rgba(138,180,255,0.5);
             filter:drop-shadow(0 0 4px rgba(138,180,255,0.6));
-            left:50%;
-            top:50%;
+            left:50%; top:50%;
             transform-origin:0 -45px;
         }
-        
-        /* 外层三角形 - 8个 */
-        .triangle-ring-outer .magic-triangle:nth-child(1){
-            transform:translate(-50%, -50%) rotate(0deg);
-        }
-        .triangle-ring-outer .magic-triangle:nth-child(2){
-            transform:translate(-50%, -50%) rotate(45deg);
-        }
-        .triangle-ring-outer .magic-triangle:nth-child(3){
-            transform:translate(-50%, -50%) rotate(90deg);
-        }
-        .triangle-ring-outer .magic-triangle:nth-child(4){
-            transform:translate(-50%, -50%) rotate(135deg);
-        }
-        .triangle-ring-outer .magic-triangle:nth-child(5){
-            transform:translate(-50%, -50%) rotate(180deg);
-        }
-        .triangle-ring-outer .magic-triangle:nth-child(6){
-            transform:translate(-50%, -50%) rotate(225deg);
-        }
-        .triangle-ring-outer .magic-triangle:nth-child(7){
-            transform:translate(-50%, -50%) rotate(270deg);
-        }
-        .triangle-ring-outer .magic-triangle:nth-child(8){
-            transform:translate(-50%, -50%) rotate(315deg);
-        }
-        
-        /* 内层三角形 - 6个，稍微小一些 */
+        .triangle-ring-outer .magic-triangle:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
+        .triangle-ring-outer .magic-triangle:nth-child(2){ transform:translate(-50%,-50%) rotate(45deg); }
+        .triangle-ring-outer .magic-triangle:nth-child(3){ transform:translate(-50%,-50%) rotate(90deg); }
+        .triangle-ring-outer .magic-triangle:nth-child(4){ transform:translate(-50%,-50%) rotate(135deg); }
+        .triangle-ring-outer .magic-triangle:nth-child(5){ transform:translate(-50%,-50%) rotate(180deg); }
+        .triangle-ring-outer .magic-triangle:nth-child(6){ transform:translate(-50%,-50%) rotate(225deg); }
+        .triangle-ring-outer .magic-triangle:nth-child(7){ transform:translate(-50%,-50%) rotate(270deg); }
+        .triangle-ring-outer .magic-triangle:nth-child(8){ transform:translate(-50%,-50%) rotate(315deg); }
         .triangle-ring-inner .magic-triangle{
             border-left:6px solid transparent;
             border-right:6px solid transparent;
@@ -390,41 +307,22 @@
             filter:drop-shadow(0 0 3px rgba(243,168,255,0.6));
             transform-origin:0 -35px;
         }
-        .triangle-ring-inner .magic-triangle:nth-child(1){
-            transform:translate(-50%, -50%) rotate(0deg);
-        }
-        .triangle-ring-inner .magic-triangle:nth-child(2){
-            transform:translate(-50%, -50%) rotate(60deg);
-        }
-        .triangle-ring-inner .magic-triangle:nth-child(3){
-            transform:translate(-50%, -50%) rotate(120deg);
-        }
-        .triangle-ring-inner .magic-triangle:nth-child(4){
-            transform:translate(-50%, -50%) rotate(180deg);
-        }
-        .triangle-ring-inner .magic-triangle:nth-child(5){
-            transform:translate(-50%, -50%) rotate(240deg);
-        }
-        .triangle-ring-inner .magic-triangle:nth-child(6){
-            transform:translate(-50%, -50%) rotate(300deg);
-        }
-        
-        /* 中心装饰点 */
+        .triangle-ring-inner .magic-triangle:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
+        .triangle-ring-inner .magic-triangle:nth-child(2){ transform:translate(-50%,-50%) rotate(60deg); }
+        .triangle-ring-inner .magic-triangle:nth-child(3){ transform:translate(-50%,-50%) rotate(120deg); }
+        .triangle-ring-inner .magic-triangle:nth-child(4){ transform:translate(-50%,-50%) rotate(180deg); }
+        .triangle-ring-inner .magic-triangle:nth-child(5){ transform:translate(-50%,-50%) rotate(240deg); }
+        .triangle-ring-inner .magic-triangle:nth-child(6){ transform:translate(-50%,-50%) rotate(300deg); }
         .magic-center{
             position:absolute;
-            left:50%;
-            top:50%;
-            transform:translate(-50%, -50%);
-            width:8px;
-            height:8px;
+            left:50%; top:50%;
+            transform:translate(-50%,-50%);
+            width:8px; height:8px;
             border-radius:50%;
             background:radial-gradient(circle, rgba(138,180,255,0.9), rgba(243,168,255,0.6));
-            box-shadow:0 0 15px rgba(138,180,255,0.8),
-                       0 0 25px rgba(243,168,255,0.5);
+            box-shadow:0 0 15px rgba(138,180,255,0.8), 0 0 25px rgba(243,168,255,0.5);
             z-index:10;
         }
-        
-        /* 魔法阵文字 */
         .magic-text{
             position:relative;
             z-index:1;
@@ -435,12 +333,11 @@
             line-height:1.6;
             margin-top:8px;
             background:linear-gradient(90deg, var(--text), var(--accent));
-            -webkit-background-clip:text;
-            background-clip:text;
+            -webkit-background-clip:text; background-clip:text;
             -webkit-text-fill-color:transparent;
         }
 
-        /* 右侧主要内容 */
+        /* 右侧主内容 */
         .main{
             position:relative;
             z-index:2;
@@ -452,7 +349,6 @@
             flex-direction:column;
             gap:16px;
         }
-
         .hero{ display:flex; gap:18px; align-items:flex-start; margin-bottom:8px; }
         .quote{ flex:1; min-width:0; }
         .quote h1{
@@ -462,14 +358,12 @@
             -webkit-text-fill-color:transparent; color:transparent;
         }
         .quote p{ margin:0 0 12px 0; color:var(--muted); font-size:15px; line-height:1.6; }
-
         .stats{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
         .stat{
             background:var(--card-bg); padding:10px 12px; border-radius:12px;
             color:var(--muted); font-weight:700; font-size:13px; border:1px solid rgba(255,255,255,0.02);
             white-space:nowrap;
         }
-
         .grid{
             display:grid;
             grid-template-columns: 1fr 1fr;
@@ -487,119 +381,73 @@
         .panel:hover{ transform:translateY(-8px); box-shadow: 0 18px 40px rgba(2,6,23,0.44); }
         .panel h3{ margin:0 0 8px 0; font-size:16px; }
         .panel p{ margin:0; color:var(--muted); font-size:14px; line-height:1.5; }
-
-        /* 列表细节 */
         .list{
-            margin:8px 0 0 0;
-            padding:0;
-            list-style:none;
-            color:var(--muted);
-            font-size:14px;
-            line-height:1.6;
+            margin:8px 0 0 0; padding:0; list-style:none;
+            color:var(--muted); font-size:14px; line-height:1.6;
         }
         .list li{ padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.02); }
         .list li:last-child{ border-bottom:none; }
 
-        /* 引用与语录 */
-        .quotes{
-            display:flex;
-            flex-direction:column;
-            gap:10px;
-        }
+        .quotes{ display:flex; flex-direction:column; gap:10px; }
         .quote-item{
-            padding:12px;
-            border-radius:10px;
+            padding:12px; border-radius:10px;
             background: linear-gradient(90deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));
             border:1px solid rgba(255,255,255,0.02);
-            color:var(--muted);
-            font-size:14px;
-            line-height:1.6;
+            color:var(--muted); font-size:14px; line-height:1.6;
         }
         .quote-item strong{ color:#fff; display:block; margin-bottom:6px; font-weight:700; }
 
-        /* 播放器样式 - 带进度显示 */
+        /* 播放器 */
         .player{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            margin-top:12px;
-            width:100%;
-            max-width:600px;
+            display:flex; align-items:center; gap:12px;
+            margin-top:12px; width:100%; max-width:600px;
         }
         .play-btn{
-            width:48px; 
-            height:48px; 
-            border-radius:12px;
-            display:inline-grid; 
-            place-items:center; 
-            font-size:20px; 
-            cursor:pointer;
+            width:48px; height:48px; border-radius:12px;
+            display:inline-grid; place-items:center; font-size:20px; cursor:pointer;
             background: linear-gradient(135deg, rgba(138,180,255,0.15), rgba(243,168,255,0.1));
-            border:1px solid rgba(138,180,255,0.2);
-            color:var(--text);
+            border:1px solid rgba(138,180,255,0.2); color:var(--text);
             transition: transform .2s, box-shadow .2s, background .2s;
-            box-shadow: 0 4px 12px rgba(2,6,23,0.3);
-            flex-shrink:0;
+            box-shadow: 0 4px 12px rgba(2,6,23,0.3); flex-shrink:0;
         }
-        .play-btn:hover{ 
-            transform:translateY(-4px) scale(1.05); 
+        .play-btn:hover{
+            transform:translateY(-4px) scale(1.05);
             box-shadow: 0 8px 20px rgba(138,180,255,0.3);
             background: linear-gradient(135deg, rgba(138,180,255,0.2), rgba(243,168,255,0.15));
         }
-        .play-btn:active{
-            transform:translateY(-2px) scale(1.02);
-        }
-        
+        .play-btn:active{ transform:translateY(-2px) scale(1.02); }
         .progress-container{
-            flex:1;
-            display:flex;
-            align-items:center;
-            gap:10px;
-            min-width:0;
+            flex:1; display:flex; align-items:center; gap:10px; min-width:0;
         }
         .progress-bar{
-            flex:1;
-            height:6px;
+            flex:1; height:6px;
             background:rgba(255,255,255,0.08);
-            border-radius:8px;
-            overflow:hidden;
-            position:relative;
-            cursor:pointer;
+            border-radius:8px; overflow:hidden; position:relative; cursor:pointer;
             min-width:120px;
         }
         .progress-fill{
             height:100%;
             background:linear-gradient(90deg, var(--accent), var(--accent-2));
-            border-radius:8px;
-            width:0%;
-            transition:width 0.1s linear;
-            position:relative;
+            border-radius:8px; width:0%;
+            transition:width 0.1s linear; position:relative;
         }
         .progress-fill::after{
             content:'';
-            position:absolute;
-            right:0;
-            top:50%;
+            position:absolute; right:0; top:50%;
             transform:translateY(-50%);
-            width:12px;
-            height:12px;
-            background:var(--text);
-            border-radius:50%;
+            width:12px; height:12px;
+            background:var(--text); border-radius:50%;
             box-shadow:0 0 8px rgba(138,180,255,0.6);
         }
         .time-display{
-            font-size:13px;
-            color:var(--muted);
-            font-weight:600;
+            font-size:13px; color:var(--muted); font-weight:600;
             font-variant-numeric:tabular-nums;
-            min-width:100px;
-            text-align:right;
-            white-space:nowrap;
+            min-width:100px; text-align:right; white-space:nowrap;
         }
 
-        /* 光标效果 */
+        /* 光标 */
         .cursor-circle{
-            position:fixed; pointer-events:none; z-index:9999;
+            position:fixed; pointer-events:none; z-index:99999;
             width:36px; height:36px; border-radius:50%; transform:translate(-50%,-50%);
             mix-blend-mode:screen;
             background: radial-gradient(circle at 40% 30%, rgba(250,250,255,0.9), rgba(138,180,255,0.22) 30%, rgba(138,180,255,0.06) 60%, transparent 70%);
@@ -608,33 +456,299 @@
         }
         .cursor-circle.big{ width:84px; height:84px; opacity:0.6; }
 
-        /* footer */
-        .footer{ margin-top:auto; color:var(--muted); font-size:13px; display:flex; gap:12px; align-items:center; }
-        .links a{ color:var(--muted); text-decoration:none; border-bottom:1px dashed rgba(255,255,255,0.03); padding-bottom:1px; }
-        .links a:hover{ color:var(--accent); }
+        /* 滚动提示 */
+        .scroll-hint{
+            position:absolute;
+            bottom:24px;
+            left:50%;
+            transform:translateX(-50%);
+            z-index:10;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:6px;
+            color:var(--muted);
+            font-size:12px;
+            opacity:0.6;
+            animation:bounce 2s infinite;
+            cursor:pointer;
+        }
+        .scroll-hint .arrow{
+            width:20px; height:20px;
+            border-right:2px solid var(--muted);
+            border-bottom:2px solid var(--muted);
+            transform:rotate(45deg);
+            opacity:0.5;
+        }
+        @keyframes bounce{
+            0%,100%{ transform:translateX(-50%) translateY(0); }
+            50%{ transform:translateX(-50%) translateY(8px); }
+        }
 
-        /* 动画 */
+        /* ========== Section 2 — 星空流星 ========== */
+        .star-section{
+            background: linear-gradient(180deg, #050916 0%, #0a0e2a 30%, #0f1635 60%, #0a0e2a 100%);
+            position:relative;
+            overflow:hidden;
+            min-height:100vh;
+            padding:80px 20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+        /* 银河雾状效果 */
+        .star-section::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(138,180,255,0.04), transparent 50%),
+                radial-gradient(ellipse at 80% 30%, rgba(243,168,255,0.03), transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(100,120,255,0.03), transparent 50%);
+            pointer-events:none;
+            z-index:0;
+        }
+        /* 星空背景点 — JS生成，这里只定义容器 */
+        .starfield{
+            position:absolute;
+            inset:0;
+            z-index:0;
+            overflow:hidden;
+        }
+        .starfield .star{
+            position:absolute;
+            background:#fff;
+            border-radius:50%;
+            animation:twinkle var(--dur) ease-in-out infinite alternate;
+        }
+        @keyframes twinkle{
+            0%{ opacity:var(--o1,0.3); transform:scale(0.8); }
+            100%{ opacity:var(--o2,1); transform:scale(1.2); }
+        }
+        /* 流星 */
+        .meteor{
+            position:absolute;
+            width:2px;
+            height:80px;
+            background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.8));
+            transform:rotate(-35deg);
+            animation:meteor-fly linear infinite;
+            z-index:1;
+            pointer-events:none;
+        }
+        .meteor::before{
+            content:'';
+            position:absolute;
+            top:0;
+            left:-1px;
+            width:4px;
+            height:4px;
+            border-radius:50%;
+            background:rgba(255,255,255,0.95);
+            box-shadow:0 0 6px rgba(255,255,255,0.8), 0 0 12px rgba(138,180,255,0.4);
+        }
+        @keyframes meteor-fly{
+            0%{
+                transform:translate(0,0) rotate(-35deg);
+                opacity:1;
+            }
+            70%{
+                opacity:1;
+            }
+            100%{
+                transform:translate(-600px,600px) rotate(-35deg);
+                opacity:0;
+            }
+        }
+        /* 星轨 — 额外的氛围 */
+        .stardust{
+            position:absolute;
+            border-radius:50%;
+            background:radial-gradient(circle, rgba(138,180,255,0.06), transparent 70%);
+            pointer-events:none;
+            z-index:0;
+            animation:drift 60s linear infinite;
+        }
+        @keyframes drift{
+            0%{ transform:translate(0,0); opacity:0.3; }
+            50%{ transform:translate(30px,-20px); opacity:0.6; }
+            100%{ transform:translate(0,0); opacity:0.3; }
+        }
+
+        /* 星空内容 */
+        .star-content{
+            position:relative;
+            z-index:2;
+            width:100%;
+            max-width:var(--maxwidth);
+            margin:0 auto;
+        }
+        .star-header{
+            text-align:center;
+            margin-bottom:40px;
+        }
+        .star-header h2{
+            font-size:42px;
+            font-weight:800;
+            letter-spacing:2px;
+            background:linear-gradient(135deg, #f3a8ff, #8ab4ff, #a5d4ff);
+            -webkit-background-clip:text;
+            background-clip:text;
+            -webkit-text-fill-color:transparent;
+            margin-bottom:12px;
+        }
+        .star-header p{
+            color:var(--muted);
+            font-size:16px;
+            max-width:500px;
+            margin:0 auto;
+            line-height:1.8;
+            opacity:0.8;
+        }
+        .star-header .sub-glow{
+            display:inline-block;
+            margin-top:8px;
+            padding:6px 20px;
+            border-radius:999px;
+            font-size:13px;
+            background:rgba(138,180,255,0.08);
+            border:1px solid rgba(138,180,255,0.12);
+            color:var(--accent);
+            -webkit-text-fill-color:var(--accent);
+        }
+
+        .star-grid{
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap:18px;
+        }
+        .star-card{
+            padding:24px;
+            border-radius:var(--radius);
+            background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
+            border:1px solid rgba(255,255,255,0.04);
+            backdrop-filter:blur(4px);
+            transition: transform .3s, box-shadow .3s, border-color .3s;
+            cursor:default;
+            position:relative;
+            overflow:hidden;
+        }
+        .star-card:hover{
+            transform:translateY(-10px);
+            box-shadow: 0 20px 60px rgba(2,6,23,0.5);
+            border-color:rgba(138,180,255,0.15);
+        }
+        .star-card::before{
+            content:'';
+            position:absolute;
+            top:0; left:0;
+            width:100%; height:2px;
+            background:linear-gradient(90deg, transparent, rgba(138,180,255,0.3), rgba(243,168,255,0.3), transparent);
+            transform:translateX(-100%);
+            transition:transform .6s;
+        }
+        .star-card:hover::before{
+            transform:translateX(100%);
+        }
+        .star-card .icon{
+            font-size:28px;
+            display:block;
+            margin-bottom:10px;
+        }
+        .star-card h3{
+            font-size:17px;
+            margin-bottom:8px;
+            font-weight:700;
+            background:linear-gradient(90deg, #fff, var(--accent));
+            -webkit-background-clip:text;
+            background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+        .star-card p{
+            color:var(--muted);
+            font-size:14px;
+            line-height:1.7;
+        }
+        .star-card .footnote{
+            display:block;
+            margin-top:12px;
+            font-size:12px;
+            color:rgba(174,189,214,0.5);
+            font-style:italic;
+        }
+
+        /* ========== Section 3 — 页脚 ========== */
+        .footer-section{
+            min-height:30vh;
+            background: linear-gradient(180deg, #0a0e2a 0%, #050916 100%);
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:16px;
+            padding:40px 20px;
+            text-align:center;
+            position:relative;
+            scroll-snap-align:end;
+        }
+        .footer-section::before{
+            content:'';
+            position:absolute;
+            top:0; left:10%;
+            width:80%; height:1px;
+            background:linear-gradient(90deg, transparent, rgba(138,180,255,0.2), transparent);
+        }
+        .footer-section .big-quote{
+            font-size:18px;
+            max-width:500px;
+            color:var(--muted);
+            line-height:1.8;
+            font-style:italic;
+            opacity:0.7;
+        }
+        .footer-section .links{
+            display:flex;
+            gap:20px;
+        }
+        .footer-section .links a{
+            color:var(--muted);
+            text-decoration:none;
+            font-size:13px;
+            border-bottom:1px dashed rgba(255,255,255,0.03);
+            padding-bottom:2px;
+            transition:color .2s;
+        }
+        .footer-section .links a:hover{ color:var(--accent); }
+        .footer-section .copy{
+            color:rgba(174,189,214,0.35);
+            font-size:12px;
+        }
+
+        /* ========== 动画 ========== */
         .fade-up{ opacity:0; transform:translateY(10px); animation: fadeUp .6s forwards; }
         .delay-1{ animation-delay:0.06s; }
         .delay-2{ animation-delay:0.14s; }
+        .delay-3{ animation-delay:0.3s; }
         @keyframes fadeUp{ to{ opacity:1; transform:none; } }
 
-        /* 响应式 */
+        /* ========== 响应式 ========== */
         @media (max-width:980px){
-            .wrap{ grid-template-columns: 1fr; padding:22px; gap:18px; min-height:unset; }
+            .wrap{ grid-template-columns:1fr; padding:22px; gap:18px; }
             .avatar{ width:104px; height:104px; border-radius:14px; flex:0 0 104px; }
-            .grid{ grid-template-columns: 1fr; }
+            .grid{ grid-template-columns:1fr; }
             .hero{ flex-direction:column; gap:14px; }
             .stats{ flex-wrap:wrap; }
+            .star-grid{ grid-template-columns:1fr; }
+            .star-header h2{ font-size:30px; }
         }
         @media (max-width:520px){
-            body{ padding:20px 12px; }
-            .wrap{ padding:14px; gap:12px; border-radius:12px; margin-top:10px; margin-bottom:20px; }
+            .section{ padding:20px 12px; }
+            .wrap{ padding:14px; gap:12px; border-radius:12px; }
             .card{ padding:18px; }
             .main{ padding:18px; }
             .avatar-wrap{ flex-direction:column; align-items:flex-start; }
             .avatar{ width:88px; height:88px; border-radius:12px; flex:0 0 88px; }
-            .quote h1{ font-size:20px; line-height:1.2; }
+            .quote h1{ font-size:20px; }
             .quote p{ font-size:14px; }
             .play-btn{ width:44px; height:44px; font-size:18px; }
             .player{ flex-wrap:wrap; }
@@ -642,28 +756,29 @@
             .time-display{ min-width:80px; font-size:12px; }
             .time-container{ padding:16px; margin:16px 0; }
             .time-value{ font-size:20px; }
-            .time-label{ font-size:11px; }
-            .date-value{ font-size:12px; }
             .magic-circle-container{ margin:20px 0; padding:16px; min-height:160px; }
             .magic-circle{ width:100px; height:100px; }
-            .magic-text{ font-size:12px; margin-top:12px; }
             .triangle-ring-inner{ inset:16px; }
-            .magic-triangle{ border-left-width:6px; border-right-width:6px; border-bottom-width:12px; }
-            .triangle-ring-inner .magic-triangle{ 
-                border-left-width:5px; 
-                border-right-width:5px; 
-                border-bottom-width:8px; 
-                transform-origin:0 -28px;
+            .triangle-ring-inner .magic-triangle{
+                border-left-width:5px; border-right-width:5px;
+                border-bottom-width:8px; transform-origin:0 -28px;
             }
             .actions{ flex-direction:column; }
             .btn{ width:100%; justify-content:center; }
+            .star-section{ padding:60px 14px; }
+            .star-header h2{ font-size:24px; }
+            .star-card{ padding:18px; }
+            .star-grid{ gap:14px; }
+            .scroll-hint{ bottom:14px; }
+            .footer-section{ min-height:20vh; padding:30px 16px; }
+            .footer-section .big-quote{ font-size:15px; }
         }
     </style>
 </head>
 <body>
-<!-- 樱花雨效果 -->
-<div class="sakura-container">
-    <!-- 左侧樱花 -->
+
+<!-- ===== 樱花雨 (固定，覆盖全局) ===== -->
+<div class="sakura-container" aria-hidden="true">
     <div class="sakura sakura-left"></div>
     <div class="sakura sakura-left"></div>
     <div class="sakura sakura-left"></div>
@@ -672,7 +787,6 @@
     <div class="sakura sakura-left"></div>
     <div class="sakura sakura-left"></div>
     <div class="sakura sakura-left"></div>
-    <!-- 右侧樱花 -->
     <div class="sakura sakura-right"></div>
     <div class="sakura sakura-right"></div>
     <div class="sakura sakura-right"></div>
@@ -683,196 +797,303 @@
     <div class="sakura sakura-right"></div>
 </div>
 
-<div class="bg-slot" aria-hidden="true"></div>
+<!-- ===== Section 1 — 首屏 ===== -->
+<section class="section hero-section" id="home">
+    <div class="bg-slot" aria-hidden="true"></div>
 
-<div class="wrap" role="main">
-    <!-- 左侧卡片 -->
-    <aside class="card fade-up delay-1" aria-label="个人信息">
-        <div class="avatar-wrap">
-            <div class="avatar" id="avatar" title="">
-                <img src="./assets/avatar.jpg" alt="li">
-            </div>
-            
-
-            <div class="intro">
-                <h2 class="name">li</h2>
-                <div class="subtitle">记录我喜欢的世界：二次元、轻音乐、galgame与风景，还有那些值得思考的问题。</div>
-
-                <div class="tags">
-                    <span class="tag">二次元</span>
-                    <span class="tag">轻音乐</span>
-                    <span class="tag">Galgame</span>
-                    <span class="tag">风景</span>
-                    <span class="tag">深度问题</span>
+    <div class="wrap" role="main">
+        <!-- 左侧卡片 -->
+        <aside class="card fade-up delay-1" aria-label="个人信息">
+            <div class="avatar-wrap">
+                <div class="avatar" id="avatar" title="">
+                    <img src="./assets/avatar.jpg" alt="li">
                 </div>
-
-                <div class="actions" style="margin-top:12px;">
-                    <a class="btn primary" id="quickPlay" href="#" title="点击播放/暂停背景音乐">▶ 听轻音乐</a>
-                    <a class="btn" href="#portfolio" title="进入作品集">✦ 作品集</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="meta">简短自我介绍：我在数字与想象之间游走，喜欢用文字与图像记录那些温柔与深刻的时刻。</div>
-
-        <!-- 时间容器 -->
-        <div class="time-container">
-            <div class="time-display-main">
-                <div class="time-label">当前时间</div>
-                <div class="time-value" id="currentTime">00:00:00</div>
-                <div class="date-value" id="currentDate">2024-01-01</div>
-            </div>
-        </div>
-
-        <!-- 魔法阵效果 -->
-        <div class="magic-circle-container">
-            <div class="magic-circle">
-                <div class="magic-center"></div>
-                <!-- 外层三角形 -->
-                <div class="triangle-ring-outer">
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                </div>
-                <!-- 内层三角形 -->
-                <div class="triangle-ring-inner">
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
-                    <div class="magic-triangle"></div>
+                <div class="intro">
+                    <h2 class="name">li</h2>
+                    <div class="subtitle">记录我喜欢的世界：二次元、轻音乐、galgame与风景，还有那些值得思考的问题。</div>
+                    <div class="tags">
+                        <span class="tag">二次元</span>
+                        <span class="tag">轻音乐</span>
+                        <span class="tag">Galgame</span>
+                        <span class="tag">风景</span>
+                        <span class="tag">深度问题</span>
+                    </div>
+                    <div class="actions" style="margin-top:12px;">
+                        <a class="btn primary" id="quickPlay" href="#" title="点击播放/暂停背景音乐">▶ 听轻音乐</a>
+                        <a class="btn" href="#star-journey" title="前往星空旅程">✦ 星空旅程</a>
+                    </div>
                 </div>
             </div>
-            <div class="magic-text">祝你拥有美好的一天</div>
-        </div>
 
-        <div class="footer">
-            <div class="links">
-                <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a> ·
-                <a href="#" onclick="return false;">邮箱</a> ·
-                <a href="#" onclick="return false;">联系</a>
+            <div class="meta">简短自我介绍：我在数字与想象之间游走，喜欢用文字与图像记录那些温柔与深刻的时刻。</div>
+
+            <!-- 时间 -->
+            <div class="time-container">
+                <div class="time-display-main">
+                    <div class="time-label">✨ 当前时间</div>
+                    <div class="time-value" id="currentTime">00:00:00</div>
+                    <div class="date-value" id="currentDate">2024-01-01</div>
+                </div>
             </div>
-        </div>
-    </aside>
 
-    <!-- 右侧主内容 -->
-    <section class="main fade-up delay-2" aria-label="主页内容">
-        <div class="hero">
-            <div class="quote">
-                <h1>欢迎来到我的小宇宙</h1>
-                <p>轻音乐作为背景，二次元是灵感，galgame记录着故事，风景提醒我世界的辽阔。这里放着我在意的东西与我正在思考的问题。</p>
+            <!-- 魔法阵 -->
+            <div class="magic-circle-container">
+                <div class="magic-circle">
+                    <div class="magic-center"></div>
+                    <div class="triangle-ring-outer">
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                    </div>
+                    <div class="triangle-ring-inner">
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                        <div class="magic-triangle"></div>
+                    </div>
+                </div>
+                <div class="magic-text">✦ 愿你拥有美好的一天 ✦</div>
+            </div>
 
-                <!-- 播放器（带进度显示） -->
-                <div class="player" aria-label="背景音播放器">
-                    <button class="play-btn" id="playBtn" title="播放/暂停">▶</button>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progressBar">
-                            <div class="progress-fill" id="progressFill"></div>
+            <div class="footer">
+                <div class="links">
+                    <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a> ·
+                    <a href="#" onclick="return false;">邮箱</a> ·
+                    <a href="#" onclick="return false;">联系</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 右侧主内容 -->
+        <section class="main fade-up delay-2" aria-label="主页内容">
+            <div class="hero">
+                <div class="quote">
+                    <h1>欢迎来到我的小宇宙</h1>
+                    <p>轻音乐作为背景，二次元是灵感，galgame记录着故事，风景提醒我世界的辽阔。这里放着我在意的东西与我正在思考的问题。</p>
+
+                    <!-- 播放器 -->
+                    <div class="player" aria-label="背景音播放器">
+                        <button class="play-btn" id="playBtn" title="播放/暂停">▶</button>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progressBar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
                         </div>
-                        <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
                     </div>
+
+                    <audio id="bgAudio" preload="none" loop>
+                        <source src="./media/music.mp3" type="audio/mpeg">
+                        <source src="./media/music.ogg" type="audio/ogg">
+                        当前浏览器不支持 audio 标签。
+                    </audio>
                 </div>
 
-                <!-- HTML5 audio 标签 -->
-                <audio id="bgAudio" preload="none" loop>
-                    <!-- 请把音频文件放在仓库：/media/music.mp3 -->
-                    <source src="./media/music.mp3" type="audio/mpeg">
-                    <source src="./media/music.ogg" type="audio/ogg">
-                    当前浏览器不支持 audio 标签。
-                </audio>
-            </div>
-
-            <div class="stats" aria-hidden="true">
-                <div class="stat">📚 主题：二次元 · 音乐 · 风景</div>
-                <div class="stat">🎮 Galgame：剧情驱动</div>
-            </div>
-        </div>
-
-        <!-- 两列区域：左列为喜欢列表与景色感言，右列为语录与引用 -->
-        <div class="grid">
-            <article class="panel" id="music" title="喜欢的轻音乐">
-                <h3>喜欢的轻音乐</h3>
-                <p class="muted" style="margin-top:6px;">这些曲子是常常在我耳边响起、适合安静聆听的旋律</p>
-                <ul class="list" aria-label="轻音乐列表">
-                    <li>遠い空へ</li>
-                    <li>冬のサクラ</li>
-                    <li>時代を越える想い</li>
-                </ul>
-            </article>
-
-            <article class="panel" id="galgame" title="喜爱的 Galgame">
-                <h3>喜爱的 Galgame</h3>
-                <p class="muted" style="margin-top:6px;">叙事与选择让我心动的作品</p>
-                <ul class="list" aria-label="Galgame 列表">
-                    <li>千恋＊万花</li>
-                    <li>紙の上の魔法使い</li>
-                    <li>魔女的夜宴</li>
-                </ul>
-            </article>
-
-            <article class="panel" id="scenery" title="风景与向往">
-                <h3>对景色的向往</h3>
-                <p class="muted" style="margin-top:6px;">我喜欢四季中不同的风景，它们像情绪一样陪伴我</p>
-                <ul class="list" aria-label="景色列表">
-                    <li>春天的樱花</li>
-                    <li>夏天的海</li>
-                    <li>秋天的枫叶</li>
-                    <li>冬天的温暖</li>
-                </ul>
-                <p style="margin-top:8px; color:var(--muted); font-size:14px;">对美好景色的向往，最喜欢了。</p>
-            </article>
-
-            <article class="panel" id="quotes" title="语录与思考">
-                <h3>片段语录</h3>
-                <div class="quotes" style="margin-top:8px;">
-                    <div class="quote-item">
-                        <strong>关于成长</strong>
-                        在你降临世上的那一天；太阳接受了行星的问候，你随即永恒地遵循着，让你出世的法则茁壮成长，你就是你，你无法逃脱你自己，师贝尔和先知已经这样说过；时间，力量都不能打碎，那既成的、已成活的形体。
-                    </div>
-
-                    <div class="quote-item">
-                        <strong>关于幸福</strong>
-                        无论身在何处，我们只能在我们自身寻找或者获得幸福。
-                    </div>
-
-                    <div class="quote-item">
-                        <strong>关于本心</strong>
-                        一切诸法皆如幻，本性自空那用除。若识心性非形象，湛然不动自真如。
-                    </div>
+                <div class="stats" aria-hidden="true">
+                    <div class="stat">📚 主题：二次元 · 音乐 · 风景</div>
+                    <div class="stat">🎮 Galgame：剧情驱动</div>
                 </div>
-            </article>
+            </div>
+
+            <!-- 两列内容 -->
+            <div class="grid">
+                <article class="panel" id="music" title="喜欢的轻音乐">
+                    <h3>🎵 喜欢的轻音乐</h3>
+                    <p class="muted" style="margin-top:6px;">这些曲子是常常在我耳边响起、适合安静聆听的旋律</p>
+                    <ul class="list" aria-label="轻音乐列表">
+                        <li>遠い空へ</li>
+                        <li>冬のサクラ</li>
+                        <li>時代を越える想い</li>
+                    </ul>
+                </article>
+
+                <article class="panel" id="galgame" title="喜爱的 Galgame">
+                    <h3>🎮 喜爱的 Galgame</h3>
+                    <p class="muted" style="margin-top:6px;">叙事与选择让我心动的作品</p>
+                    <ul class="list" aria-label="Galgame 列表">
+                        <li>千恋＊万花</li>
+                        <li>紙の上の魔法使い</li>
+                        <li>魔女的夜宴</li>
+                    </ul>
+                </article>
+
+                <article class="panel" id="scenery" title="风景与向往">
+                    <h3>🌄 对景色的向往</h3>
+                    <p class="muted" style="margin-top:6px;">我喜欢四季中不同的风景，它们像情绪一样陪伴我</p>
+                    <ul class="list" aria-label="景色列表">
+                        <li>春天的樱花</li>
+                        <li>夏天的海</li>
+                        <li>秋天的枫叶</li>
+                        <li>冬天的温暖</li>
+                    </ul>
+                    <p style="margin-top:8px; color:var(--muted); font-size:14px;">对美好景色的向往，最喜欢了。</p>
+                </article>
+
+                <article class="panel" id="quotes" title="语录与思考">
+                    <h3>📝 片段语录</h3>
+                    <div class="quotes" style="margin-top:8px;">
+                        <div class="quote-item">
+                            <strong>关于成长</strong>
+                            在你降临世上的那一天；太阳接受了行星的问候，你随即永恒地遵循着，让你出世的法则茁壮成长，你就是你，你无法逃脱你自己。
+                        </div>
+                        <div class="quote-item">
+                            <strong>关于幸福</strong>
+                            无论身在何处，我们只能在我们自身寻找或者获得幸福。
+                        </div>
+                        <div class="quote-item">
+                            <strong>关于本心</strong>
+                            若识心性非形象，湛然不动自真如。
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:8px; align-items:center; flex-wrap:wrap;">
+                <a class="btn primary" href="#star-journey">✦ 前往星空旅程</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- 滚动提示 -->
+    <div class="scroll-hint" onclick="document.getElementById('star-journey').scrollIntoView({behavior:'smooth'})">
+        <span>向下滚动</span>
+        <div class="arrow"></div>
+    </div>
+</section>
+
+<!-- ===== Section 2 — 星空旅程 ===== -->
+<section class="section star-section" id="star-journey">
+    <!-- 星空容器 — JS 动态生成星星 -->
+    <div class="starfield" id="starfield"></div>
+
+    <!-- 流星 — CSS 动画 -->
+    <div class="meteor" style="top:8%; right:10%; animation-duration:4.2s; animation-delay:0s; opacity:0;"></div>
+    <div class="meteor" style="top:15%; right:25%; animation-duration:5.5s; animation-delay:3s; opacity:0; height:60px;"></div>
+    <div class="meteor" style="top:5%; right:40%; animation-duration:3.8s; animation-delay:7s; opacity:0; height:70px;"></div>
+    <div class="meteor" style="top:25%; right:15%; animation-duration:6s; animation-delay:12s; opacity:0; height:90px;"></div>
+    <div class="meteor" style="top:10%; right:55%; animation-duration:4.8s; animation-delay:18s; opacity:0; height:55px;"></div>
+    <div class="meteor" style="top:20%; right:5%; animation-duration:5s; animation-delay:25s; opacity:0; height:75px;"></div>
+    <div class="meteor" style="top:2%; right:30%; animation-duration:4.5s; animation-delay:33s; opacity:0; height:65px;"></div>
+
+    <!-- 星云光晕 -->
+    <div class="stardust" style="width:400px;height:400px;top:10%;left:-5%;"></div>
+    <div class="stardust" style="width:300px;height:300px;bottom:15%;right:5%;animation-duration:80s;"></div>
+
+    <!-- 内容 -->
+    <div class="star-content fade-up">
+        <div class="star-header">
+            <h2>✦ 星空下的旅程 ✦</h2>
+            <p>每一颗流星都是宇宙写给我们的情书，每一段故事都是时间留下的印记。</p>
+            <span class="sub-glow">☾ 二次元 · 音乐 · 星空 · 思考</span>
         </div>
 
-        <div style="display:flex; gap:12px; margin-top:8px; align-items:center;">
-            <a class="btn primary" href="#portfolio" onclick="return false;">查看完整作品集</a>
-            <a class="btn" href="#blog" onclick="return false;">打开博客</a>
-        </div>
-    </section>
-</div>
+        <div class="star-grid">
+            <div class="star-card">
+                <span class="icon">🌠</span>
+                <h3>二次元之旅</h3>
+                <p>从最初接触动漫到现在，每一部作品都像一颗星星，在记忆的夜空中闪烁。那些热血、感动与泪水，构成了我心中不灭的星空。</p>
+                <span class="footnote">—— 每颗星都是一个世界</span>
+            </div>
 
-<!-- 光圈跟随鼠标 -->
+            <div class="star-card">
+                <span class="icon">✨</span>
+                <h3>Galgame 记忆</h3>
+                <p>那些让我心动的故事，每一个选择都像是流星，划过后留下永恒的痕迹。在文字与画面的交织中，我找到了无数个可能的自己。</p>
+                <span class="footnote">—— 选择即是命运</span>
+            </div>
+
+            <div class="star-card">
+                <span class="icon">🎵</span>
+                <h3>星空下的旋律</h3>
+                <p>轻音乐与星空是绝配。闭上眼，让旋律带你去往另一个世界——那里有风吹过草原的声音，有雨滴落在窗台的节奏，有星辰旋转的静谧。</p>
+                <span class="footnote">—— 音乐是宇宙的语言</span>
+            </div>
+
+            <div class="star-card">
+                <span class="icon">🌌</span>
+                <h3>未尽的思考</h3>
+                <p>在浩瀚的星空下，思考那些没有答案的问题，本身就是一种浪漫。关于存在、关于选择、关于美——这些问题像星光一样，指引我前行。</p>
+                <span class="footnote">—— 问题比答案更珍贵</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Section 3 — 页脚 ===== -->
+<section class="footer-section" id="footer">
+    <div class="big-quote">
+        "世界不止眼前的苟且，还有二次元的浪漫与风景的辽阔。"
+    </div>
+    <div class="links">
+        <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="#" onclick="return false;">邮箱</a>
+        <a href="#" onclick="return false;">联系</a>
+        <a href="#home">返回顶部</a>
+    </div>
+    <div class="copy">© li · 记录我喜欢的世界</div>
+</section>
+
+<!-- ===== 光标 ===== -->
 <div class="cursor-circle" id="cursor"></div>
 
 <script>
-    // 光圈跟随
+    // ========== 星空生成 ==========
+    (function generateStars(){
+        const container = document.getElementById('starfield');
+        if (!container) return;
+        const count = 150;
+        for (let i = 0; i < count; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 2.5 + 0.5;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            const twinkleDur = (Math.random() * 3 + 2) + 's';
+            star.style.setProperty('--dur', twinkleDur);
+            star.style.setProperty('--o1', (Math.random() * 0.3 + 0.1));
+            star.style.setProperty('--o2', (Math.random() * 0.5 + 0.5));
+            star.style.animationDelay = (Math.random() * 5) + 's';
+            container.appendChild(star);
+        }
+        // 加一些亮星
+        for (let i = 0; i < 20; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 3 + 2;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--dur', (Math.random() * 4 + 3) + 's');
+            star.style.setProperty('--o1', '0.6');
+            star.style.setProperty('--o2', '1');
+            star.style.animationDelay = (Math.random() * 6) + 's';
+            star.style.boxShadow = '0 0 4px rgba(255,255,255,0.6)';
+            container.appendChild(star);
+        }
+    })();
+
+    // ========== 光标跟随 ==========
     const cursor = document.getElementById('cursor');
     document.addEventListener('mousemove', e => {
         cursor.style.left = e.clientX + 'px';
         cursor.style.top = e.clientY + 'px';
     });
-
-    document.querySelectorAll('a, .avatar, .panel, .btn, .play-btn').forEach(el=>{
+    document.querySelectorAll('a, .avatar, .panel, .btn, .play-btn, .star-card, .scroll-hint').forEach(el=>{
         el.addEventListener('mouseenter', ()=> cursor.classList.add('big'));
         el.addEventListener('mouseleave', ()=> cursor.classList.remove('big'));
     });
 
-    // 头像轻微跟随
+    // ========== 头像跟随 ==========
     const avatar = document.getElementById('avatar');
     avatar.addEventListener('mousemove', (e)=>{
         const rect = avatar.getBoundingClientRect();
@@ -880,11 +1101,9 @@
         const dy = (e.clientY - rect.top) / rect.height - 0.5;
         avatar.style.transform = `translateY(-6px) rotate(${dx*6}deg) scale(1.03)`;
     });
-    avatar.addEventListener('mouseleave', ()=> {
-        avatar.style.transform = '';
-    });
+    avatar.addEventListener('mouseleave', ()=> { avatar.style.transform = ''; });
 
-    // 播放器逻辑 - 带进度显示和自动播放
+    // ========== 播放器 ==========
     const audio = document.getElementById('bgAudio');
     const playBtn = document.getElementById('playBtn');
     const quickPlay = document.getElementById('quickPlay');
@@ -892,7 +1111,7 @@
     const progressFill = document.getElementById('progressFill');
     const timeDisplay = document.getElementById('timeDisplay');
 
-    audio.volume = 0.6; // 固定音量
+    audio.volume = 0.6;
     audio.preload = 'auto';
     audio.loop = true;
 
@@ -902,7 +1121,6 @@
         const s = Math.floor(sec % 60);
         return `${m}:${s.toString().padStart(2, '0')}`;
     }
-
     function updateProgress() {
         if (audio.duration) {
             const pct = (audio.currentTime / audio.duration) * 100;
@@ -913,18 +1131,13 @@
             timeDisplay.textContent = `${formatTime(audio.currentTime)} / --:--`;
         }
     }
-
-    // 更新播放进度
     audio.addEventListener('timeupdate', updateProgress);
     audio.addEventListener('loadedmetadata', updateProgress);
 
-    // 点击进度条跳转
     progressBar.addEventListener('click', (e) => {
         const rect = progressBar.getBoundingClientRect();
         const pct = (e.clientX - rect.left) / rect.width;
-        if (audio.duration) {
-            audio.currentTime = pct * audio.duration;
-        }
+        if (audio.duration) audio.currentTime = pct * audio.duration;
     });
 
     playBtn.addEventListener('click', async (e) => {
@@ -934,83 +1147,61 @@
                 await audio.play();
                 playBtn.textContent = '⏸';
                 if (quickPlay) quickPlay.textContent = '⏸ 暂停';
-            } catch (err) {
-                console.warn('播放被浏览器阻止', err);
-            }
+            } catch (err) { console.warn('播放被阻止', err); }
         } else {
             audio.pause();
             playBtn.textContent = '▶';
             if (quickPlay) quickPlay.textContent = '▶ 听轻音乐';
         }
     });
-
     if (quickPlay) {
-        quickPlay.addEventListener('click', async (e) => {
-            e.preventDefault();
-            playBtn.click();
-        });
+        quickPlay.addEventListener('click', async (e) => { e.preventDefault(); playBtn.click(); });
     }
 
-    // 自动播放功能（在用户首次交互后）
+    // ========== 自动播放 ==========
     let autoPlayAttempted = false;
     const attemptAutoPlay = async () => {
         if (autoPlayAttempted) return;
         autoPlayAttempted = true;
-        
         try {
             audio.preload = 'auto';
             await audio.play();
             playBtn.textContent = '⏸';
             if (quickPlay) quickPlay.textContent = '⏸ 暂停';
-        } catch (err) {
-            // 自动播放失败，等待用户手动点击
-            console.log('自动播放失败，等待用户交互');
-        }
+        } catch (err) { console.log('自动播放失败，等待用户交互'); }
     };
-
-    // 监听任何用户交互，然后尝试自动播放
-    const userInteractions = ['click', 'keydown', 'touchstart'];
-    const handleAutoPlay = () => {
-        if (!autoPlayAttempted) {
-            attemptAutoPlay();
-        }
-    };
-    userInteractions.forEach(eventType => {
-        document.addEventListener(eventType, handleAutoPlay, { once: true });
+    ['click', 'keydown', 'touchstart'].forEach(eventType => {
+        document.addEventListener(eventType, () => {
+            if (!autoPlayAttempted) attemptAutoPlay();
+        }, { once: true });
     });
 
-    // 时间显示功能
+    // ========== 时钟 ==========
     function updateTime() {
         const now = new Date();
         const hours = now.getHours().toString().padStart(2, '0');
         const minutes = now.getMinutes().toString().padStart(2, '0');
         const seconds = now.getSeconds().toString().padStart(2, '0');
         const timeStr = `${hours}:${minutes}:${seconds}`;
-        
         const year = now.getFullYear();
         const month = (now.getMonth() + 1).toString().padStart(2, '0');
         const day = now.getDate().toString().padStart(2, '0');
         const dateStr = `${year}-${month}-${day}`;
-        
         const timeEl = document.getElementById('currentTime');
         const dateEl = document.getElementById('currentDate');
-        
         if (timeEl) timeEl.textContent = timeStr;
         if (dateEl) dateEl.textContent = dateStr;
     }
-    
-    // 立即更新一次时间
     updateTime();
-    // 每秒更新一次
     setInterval(updateTime, 1000);
 
-    // 控制台提示（便于替换资源）
-    console.log("提示：将头像替换为 ./assets/avatar.jpg，将背景图片放到 ./assets/bg.jpg，将音频放到 ./media/music.mp3 或 .ogg。");
-
-    // 键盘快捷键：按 M 播放/暂停
+    // ========== 键盘快捷键 ==========
     document.addEventListener('keydown', (e) => {
         if (e.key.toLowerCase() === 'm') playBtn.click();
     });
+
+    // ========== 控制台提示 ==========
+    console.log("提示：将头像替换为 ./assets/avatar.jpg，将背景图片放到 ./assets/bg.jpg，将音频放到 ./media/music.mp3 或 .ogg。");
 </script>
 </body>
 </html>
