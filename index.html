@@ -224,64 +224,168 @@
         .greeting{ font-size:14px; color:var(--accent); margin-top:6px; font-weight:600; }
 
         /* 朝 — 魔法阵 (金色调) */
+        /* ======= 魔法阵 (魔卡少女樱风格 — 8层复合阵) ======= */
         .magic-box{
             position:relative; margin:24px 0; padding:24px;
             display:flex; flex-direction:column; justify-content:center;
-            align-items:center; min-height:180px;
+            align-items:center; min-height:200px;
         }
+        /* Layer 1 — 外发光晕 */
+        .magic-box::before{
+            content:''; position:absolute; top:50%; left:50%;
+            transform:translate(-50%,-50%);
+            width:200px; height:200px; border-radius:50%;
+            background:radial-gradient(circle, rgba(255,176,136,0.1) 0%, rgba(255,126,95,0.04) 30%, transparent 65%);
+            animation:m-glow 2.5s ease-in-out infinite alternate;
+            pointer-events:none; z-index:0;
+        }
+        @keyframes m-glow{ 0%{ transform:translate(-50%,-50%) scale(0.9); opacity:0.5; } 100%{ transform:translate(-50%,-50%) scale(1.1); opacity:1; } }
+
         .magic-circle{
-            position:relative; width:120px; height:120px; margin-bottom:16px;
+            position:relative; width:130px; height:130px; margin-bottom:12px;
         }
+        /* Layer 3 — 外环 */
         .magic-circle::before{
-            content:''; position:absolute; inset:0;
-            border:2px solid rgba(255,176,136,0.3); border-radius:50%;
-            box-shadow:0 0 20px rgba(255,176,136,0.2), inset 0 0 20px rgba(255,126,95,0.1);
+            content:''; position:absolute; inset:-3px;
+            border:1.5px solid rgba(255,176,136,0.3); border-radius:50%;
+            box-shadow:0 0 16px rgba(255,176,136,0.15);
         }
+        /* Layer 6 — 中环 */
         .magic-circle::after{
-            content:''; position:absolute; inset:15px;
-            border:1px solid rgba(255,126,95,0.25); border-radius:50%;
-            box-shadow:0 0 15px rgba(255,126,95,0.15);
+            content:''; position:absolute; inset:14px;
+            border:1px solid rgba(255,126,95,0.2); border-radius:50%;
+            box-shadow:0 0 10px rgba(255,126,95,0.1);
         }
-        .tri-ring{ position:absolute; inset:0; animation:rot 30s linear infinite; }
-        .tri-ring-in{ position:absolute; inset:20px; animation:rot-rev 25s linear infinite; }
-        @keyframes rot{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
-        @keyframes rot-rev{ 0%{ transform:rotate(360deg); } 100%{ transform:rotate(0deg); } }
-        .tri{
-            position:absolute; width:0; height:0;
-            border-left:8px solid transparent; border-right:8px solid transparent;
-            border-bottom:14px solid rgba(255,176,136,0.5);
-            filter:drop-shadow(0 0 4px rgba(255,176,136,0.6));
-            left:50%; top:50%; transform-origin:0 -45px;
+
+        /* Layer 2 — 星座节点 (8光点) */
+        .constellation{ position:absolute; inset:0; animation:spin 30s linear infinite; }
+        .constellation .orb{
+            position:absolute; top:50%; left:50%;
+            width:5px; height:5px; margin:-2.5px 0 0 -2.5px; border-radius:50%;
+            background:rgba(255,210,170,0.9);
+            box-shadow:0 0 6px rgba(255,176,136,0.5);
         }
-        .tri-ring .tri:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
-        .tri-ring .tri:nth-child(2){ transform:translate(-50%,-50%) rotate(45deg); }
-        .tri-ring .tri:nth-child(3){ transform:translate(-50%,-50%) rotate(90deg); }
-        .tri-ring .tri:nth-child(4){ transform:translate(-50%,-50%) rotate(135deg); }
-        .tri-ring .tri:nth-child(5){ transform:translate(-50%,-50%) rotate(180deg); }
-        .tri-ring .tri:nth-child(6){ transform:translate(-50%,-50%) rotate(225deg); }
-        .tri-ring .tri:nth-child(7){ transform:translate(-50%,-50%) rotate(270deg); }
-        .tri-ring .tri:nth-child(8){ transform:translate(-50%,-50%) rotate(315deg); }
-        .tri-ring-in .tri{
-            border-left:6px solid transparent; border-right:6px solid transparent;
-            border-bottom:10px solid rgba(255,126,95,0.5);
-            filter:drop-shadow(0 0 3px rgba(255,126,95,0.6)); transform-origin:0 -35px;
+        .constellation .orb:nth-child(1){ transform:rotate(0deg) translateX(58px); }
+        .constellation .orb:nth-child(2){ transform:rotate(45deg) translateX(58px); }
+        .constellation .orb:nth-child(3){ transform:rotate(90deg) translateX(58px); }
+        .constellation .orb:nth-child(4){ transform:rotate(135deg) translateX(58px); }
+        .constellation .orb:nth-child(5){ transform:rotate(180deg) translateX(58px); }
+        .constellation .orb:nth-child(6){ transform:rotate(225deg) translateX(58px); }
+        .constellation .orb:nth-child(7){ transform:rotate(270deg) translateX(58px); }
+        .constellation .orb:nth-child(8){ transform:rotate(315deg) translateX(58px); }
+
+        /* Layer 3 — 符文环 */
+        .rune-ring{
+            position:absolute; inset:8px; border-radius:50%;
+            border:1.5px dashed rgba(255,176,136,0.16);
+            animation:spin-rev 22s linear infinite;
         }
-        .tri-ring-in .tri:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
-        .tri-ring-in .tri:nth-child(2){ transform:translate(-50%,-50%) rotate(60deg); }
-        .tri-ring-in .tri:nth-child(3){ transform:translate(-50%,-50%) rotate(120deg); }
-        .tri-ring-in .tri:nth-child(4){ transform:translate(-50%,-50%) rotate(180deg); }
-        .tri-ring-in .tri:nth-child(5){ transform:translate(-50%,-50%) rotate(240deg); }
-        .tri-ring-in .tri:nth-child(6){ transform:translate(-50%,-50%) rotate(300deg); }
-        .magic-dot{
-            position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-            width:8px; height:8px; border-radius:50%;
-            background:radial-gradient(circle, rgba(255,176,136,0.9), rgba(255,126,95,0.6));
-            box-shadow:0 0 15px rgba(255,176,136,0.8), 0 0 25px rgba(255,126,95,0.5);
+        /* 符文上的小标记 */
+        .rune-ring::after{
+            content:''; position:absolute; inset:-2px; border-radius:50%;
+            border:4px dotted rgba(255,176,136,0.08);
+        }
+
+        /* Layer 4 — 太阳齿轮 (12道光芒) */
+        .sunburst{ position:absolute; inset:0; animation:spin 40s linear infinite; }
+        .sunburst .spike{
+            position:absolute; top:50%; left:50%;
+            width:0; height:0;
+            border-left:4px solid transparent; border-right:4px solid transparent;
+            border-bottom:14px solid rgba(255,176,136,0.2);
+            filter:drop-shadow(0 0 3px rgba(255,176,136,0.15));
+            transform-origin:0 -52px;
+        }
+        .sunburst .spike:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
+        .sunburst .spike:nth-child(2){ transform:translate(-50%,-50%) rotate(30deg); }
+        .sunburst .spike:nth-child(3){ transform:translate(-50%,-50%) rotate(60deg); }
+        .sunburst .spike:nth-child(4){ transform:translate(-50%,-50%) rotate(90deg); }
+        .sunburst .spike:nth-child(5){ transform:translate(-50%,-50%) rotate(120deg); }
+        .sunburst .spike:nth-child(6){ transform:translate(-50%,-50%) rotate(150deg); }
+        .sunburst .spike:nth-child(7){ transform:translate(-50%,-50%) rotate(180deg); }
+        .sunburst .spike:nth-child(8){ transform:translate(-50%,-50%) rotate(210deg); }
+        .sunburst .spike:nth-child(9){ transform:translate(-50%,-50%) rotate(240deg); }
+        .sunburst .spike:nth-child(10){ transform:translate(-50%,-50%) rotate(270deg); }
+        .sunburst .spike:nth-child(11){ transform:translate(-50%,-50%) rotate(300deg); }
+        .sunburst .spike:nth-child(12){ transform:translate(-50%,-50%) rotate(330deg); }
+
+        /* Layer 5 — 五芒星 ⭐ (核心视觉) */
+        .pentagram-wrapper{
+            position:absolute; top:50%; left:50%;
+            width:62px; height:62px; margin:-31px 0 0 -31px;
+            animation:spin 18s linear infinite;
+        }
+        .pentagram{
+            width:100%; height:100%;
+            background:rgba(255,210,170,0.15);
+            clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            box-shadow:0 0 15px rgba(255,176,136,0.15), inset 0 0 10px rgba(255,210,170,0.1);
+        }
+        /* 五芒星描边 */
+        .pentagram-wrapper::after{
+            content:''; position:absolute; inset:0;
+            background:rgba(255,200,160,0.08);
+            clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            transform:rotate(180deg);
+        }
+
+        /* Layer 6 — 六芒星 (两个对向三角形) */
+        .hexagram{
+            position:absolute; top:50%; left:50%;
+            width:44px; height:44px; margin:-22px 0 0 -22px;
+        }
+        .hexagram .tri-a{
+            position:absolute; inset:0;
+            clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
+            background:rgba(255,126,95,0.2);
+            animation:spin-rev 15s linear infinite;
+        }
+        .hexagram .tri-b{
+            position:absolute; inset:0;
+            clip-path:polygon(50% 100%, 100% 0%, 0% 0%);
+            background:rgba(255,176,136,0.2);
+            animation:spin 20s linear infinite;
+        }
+
+        /* Layer 7 — 内圈光点 */
+        .inner-dots{ position:absolute; inset:0; animation:spin-rev 25s linear infinite; }
+        .inner-dots .dot{
+            position:absolute; top:50%; left:50%;
+            width:3px; height:3px; margin:-1.5px 0 0 -1.5px; border-radius:50%;
+            background:rgba(255,210,170,0.7);
+            box-shadow:0 0 4px rgba(255,176,136,0.4);
+        }
+        .inner-dots .dot:nth-child(1){ transform:rotate(0deg) translateX(18px); }
+        .inner-dots .dot:nth-child(2){ transform:rotate(60deg) translateX(18px); }
+        .inner-dots .dot:nth-child(3){ transform:rotate(120deg) translateX(18px); }
+        .inner-dots .dot:nth-child(4){ transform:rotate(180deg) translateX(18px); }
+        .inner-dots .dot:nth-child(5){ transform:rotate(240deg) translateX(18px); }
+        .inner-dots .dot:nth-child(6){ transform:rotate(300deg) translateX(18px); }
+
+        /* Layer 8 — 中心宝石 */
+        .center-gem{
+            position:absolute; top:50%; left:50%;
+            width:10px; height:10px; margin:-5px 0 0 -5px;
+            border-radius:50%;
+            background:radial-gradient(circle at 35% 30%, #fff, #ffb088, #ff7e5f);
+            box-shadow:0 0 10px rgba(255,176,136,0.8), 0 0 25px rgba(255,126,95,0.4);
+            animation:gem-pulse 2s ease-in-out infinite alternate;
             z-index:10;
         }
+        .center-gem::after{
+            content:''; position:absolute; top:50%; left:50%;
+            width:22px; height:22px; margin:-11px 0 0 -11px;
+            background:radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);
+            animation:gem-pulse 2s ease-in-out infinite alternate;
+        }
+        @keyframes gem-pulse{ 0%{ transform:scale(1); opacity:0.8; } 100%{ transform:scale(1.2); opacity:1; } }
+
+        @keyframes spin{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
+        @keyframes spin-rev{ 0%{ transform:rotate(360deg); } 100%{ transform:rotate(0deg); } }
+
         .magic-txt{
             position:relative; z-index:1; font-size:13px; font-weight:600;
-            text-align:center; line-height:1.6; margin-top:8px;
+            text-align:center; line-height:1.6; margin-top:6px;
             background:linear-gradient(90deg, var(--text), var(--accent));
             -webkit-background-clip:text; background-clip:text;
             -webkit-text-fill-color:transparent;
@@ -710,8 +814,26 @@
             .time-val{ font-size:20px; }
             .magic-box{ margin:20px 0; padding:16px; min-height:160px; }
             .magic-circle{ width:100px; height:100px; }
-            .tri-ring-in{ inset:16px; }
-            .tri-ring-in .tri{ border-left-width:5px; border-right-width:5px; border-bottom-width:8px; transform-origin:0 -28px; }
+            .constellation .orb:nth-child(1){ transform:rotate(0deg) translateX(44px); }
+            .constellation .orb:nth-child(2){ transform:rotate(45deg) translateX(44px); }
+            .constellation .orb:nth-child(3){ transform:rotate(90deg) translateX(44px); }
+            .constellation .orb:nth-child(4){ transform:rotate(135deg) translateX(44px); }
+            .constellation .orb:nth-child(5){ transform:rotate(180deg) translateX(44px); }
+            .constellation .orb:nth-child(6){ transform:rotate(225deg) translateX(44px); }
+            .constellation .orb:nth-child(7){ transform:rotate(270deg) translateX(44px); }
+            .constellation .orb:nth-child(8){ transform:rotate(315deg) translateX(44px); }
+            .sunburst .spike{ transform-origin:0 -38px; }
+            .pentagram-wrapper{ width:48px; height:48px; margin:-24px 0 0 -24px; }
+            .hexagram{ width:34px; height:34px; margin:-17px 0 0 -17px; }
+            .rune-ring{ inset:6px; }
+            .inner-dots .dot{ width:2px; height:2px; }
+            .inner-dots .dot:nth-child(1){ transform:rotate(0deg) translateX(14px); }
+            .inner-dots .dot:nth-child(2){ transform:rotate(60deg) translateX(14px); }
+            .inner-dots .dot:nth-child(3){ transform:rotate(120deg) translateX(14px); }
+            .inner-dots .dot:nth-child(4){ transform:rotate(180deg) translateX(14px); }
+            .inner-dots .dot:nth-child(5){ transform:rotate(240deg) translateX(14px); }
+            .inner-dots .dot:nth-child(6){ transform:rotate(300deg) translateX(14px); }
+            .center-gem{ width:8px; height:8px; margin:-4px 0 0 -4px; }
             .actions{ flex-direction:column; }
             .btn{ width:100%; justify-content:center; }
             .afternoon{ padding:60px 14px; }
@@ -789,18 +911,36 @@
                 </div>
             </div>
 
-            <!-- 魔法阵 (金色) -->
+            <!-- 魔法阵 (魔卡少女樱风格) -->
             <div class="magic-box">
                 <div class="magic-circle">
-                    <div class="magic-dot"></div>
-                    <div class="tri-ring">
-                        <div class="tri"></div><div class="tri"></div><div class="tri"></div><div class="tri"></div>
-                        <div class="tri"></div><div class="tri"></div><div class="tri"></div><div class="tri"></div>
+                    <!-- Layer 2 — 星座节点 -->
+                    <div class="constellation">
+                        <div class="orb"></div><div class="orb"></div><div class="orb"></div><div class="orb"></div>
+                        <div class="orb"></div><div class="orb"></div><div class="orb"></div><div class="orb"></div>
                     </div>
-                    <div class="tri-ring-in">
-                        <div class="tri"></div><div class="tri"></div><div class="tri"></div><div class="tri"></div>
-                        <div class="tri"></div><div class="tri"></div>
+                    <!-- Layer 3 — 符文环 -->
+                    <div class="rune-ring"></div>
+                    <!-- Layer 4 — 太阳齿轮 -->
+                    <div class="sunburst">
+                        <div class="spike"></div><div class="spike"></div><div class="spike"></div><div class="spike"></div>
+                        <div class="spike"></div><div class="spike"></div><div class="spike"></div><div class="spike"></div>
+                        <div class="spike"></div><div class="spike"></div><div class="spike"></div><div class="spike"></div>
                     </div>
+                    <!-- Layer 5 — 五芒星 -->
+                    <div class="pentagram-wrapper"><div class="pentagram"></div></div>
+                    <!-- Layer 6 — 六芒星 -->
+                    <div class="hexagram">
+                        <div class="tri-a"></div>
+                        <div class="tri-b"></div>
+                    </div>
+                    <!-- Layer 7 — 内圈光点 -->
+                    <div class="inner-dots">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                    </div>
+                    <!-- Layer 8 — 中心宝石 -->
+                    <div class="center-gem"></div>
                 </div>
                 <div class="magic-txt">✦ 每一个清晨都是新的开始 ✦</div>
             </div>
@@ -1160,6 +1300,31 @@
 
     // ========== 键盘 M ==========
     document.addEventListener('keydown', e => { if(e.key.toLowerCase()==='m') playBtn.click(); });
+
+    // ========== 魔法阵粒子 ==========
+    (function(){
+        const box = document.querySelector('.magic-box');
+        if (!box) return;
+        const particles = 14;
+        for (let i = 0; i < particles; i++) {
+            const p = document.createElement('div');
+            p.style.cssText = `
+                position:absolute; pointer-events:none; z-index:0;
+                width:${Math.random()*3+1.5}px; height:${Math.random()*3+1.5}px;
+                border-radius:50%;
+                background:rgba(255,210,170,${Math.random()*0.4+0.2});
+                box-shadow:0 0 ${Math.random()*4+2}px rgba(255,176,136,0.3);
+                bottom:${Math.random()*30+10}%;
+                left:${Math.random()*80+10}%;
+                opacity:0;
+            `;
+            p.style.animation = `m-particle ${Math.random()*3+3}s ease-in-out ${Math.random()*4}s infinite`;
+            box.appendChild(p);
+        }
+        const style = document.createElement('style');
+        style.textContent = `@keyframes m-particle{0%{transform:translateY(0) scale(0.5);opacity:0}20%{opacity:1}80%{opacity:0.3}100%{transform:translateY(-80px) scale(1);opacity:0}}`;
+        document.head.appendChild(style);
+    })();
 
     console.log("提示：头像 assets/avatar.jpg | 背景图 assets/bg.jpg | 音频 media/music.mp3");
 </script>
