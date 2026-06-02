@@ -37,6 +37,10 @@
         .delay-3{ animation-delay:0.3s; }
         @keyframes fadeUp{ to{ opacity:1; transform:none; } }
 
+        /* 滚动触发动画 */
+        .reveal{ opacity:0; transform:translateY(24px); transition:opacity .6s cubic-bezier(.2,.9,.3,1), transform .6s cubic-bezier(.2,.9,.3,1); }
+        .reveal.revealed{ opacity:1; transform:translateY(0); }
+
         /* ========== 滚动提示 ========== */
         .scroll-hint{
             position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
@@ -783,6 +787,110 @@
         .outro .copy{ color:rgba(174,189,214,0.35); font-size:12px; }
 
         /* ======================================================
+           导航 & 滚动增强
+           ====================================================== */
+        .scroll-progress{
+            position:fixed; top:0; left:0; width:0%; height:2px; z-index:99998;
+            background: linear-gradient(90deg, #8ab4ff, #f3a8ff, #ffb088);
+            transition:width 0.1s linear;
+        }
+        .nav-dots{
+            position:fixed; right:16px; top:50%; transform:translateY(-50%); z-index:99997;
+            display:flex; flex-direction:column; gap:10px;
+        }
+        .nav-dots .dot{
+            width:10px; height:10px; border-radius:50%; cursor:pointer;
+            background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.08);
+            transition: all .3s; position:relative;
+        }
+        .nav-dots .dot:hover{ background:rgba(255,255,255,0.28); transform:scale(1.3); }
+        .nav-dots .dot.active{
+            background:rgba(138,180,255,0.75); border-color:rgba(138,180,255,0.5);
+            box-shadow:0 0 12px rgba(138,180,255,0.35), 0 0 24px rgba(138,180,255,0.12);
+            transform:scale(1.45);
+        }
+        .nav-dots .dot .tooltip{
+            position:absolute; right:18px; top:50%; transform:translateY(-50%);
+            font-size:11px; color:rgba(255,255,255,0.5); white-space:nowrap;
+            opacity:0; transition:opacity .25s; pointer-events:none;
+            font-family: "Inter", "PingFang SC", sans-serif;
+        }
+        .nav-dots .dot:hover .tooltip{ opacity:1; }
+
+        .back-top{
+            position:fixed; bottom:30px; right:24px; z-index:99996;
+            width:40px; height:40px; border-radius:12px;
+            background:rgba(255,255,255,0.04); backdrop-filter:blur(10px);
+            border:1px solid rgba(255,255,255,0.06);
+            color:rgba(255,255,255,0.35); font-size:18px; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            opacity:0; transform:translateY(20px); transition:all .35s cubic-bezier(.2,.9,.3,1);
+            pointer-events:none; line-height:1;
+        }
+        .back-top.visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
+        .back-top:hover{ background:rgba(138,180,255,0.08); border-color:rgba(138,180,255,0.12); color:#8ab4ff; transform:translateY(-4px); }
+
+        /* 卡片 hover 微光 */
+        .panel, .summer-card, .star-card{ position:relative; overflow:hidden; }
+        .panel::after, .summer-card::after, .star-card::after{
+            content:''; position:absolute; inset:0; border-radius:inherit;
+            background:linear-gradient(120deg, transparent 25%, rgba(255,255,255,0.035) 50%, transparent 75%);
+            opacity:0; transition:opacity .5s; pointer-events:none;
+        }
+        .panel:hover::after, .summer-card:hover::after, .star-card:hover::after{ opacity:1; }
+        .summer-card::after, .star-card::after{ background:linear-gradient(120deg, transparent 25%, rgba(255,255,255,0.06) 50%, transparent 75%); }
+
+        /* 樱花爆发 */
+        .sakura-burst{
+            position:fixed; pointer-events:none; z-index:99995;
+            width:8px; height:8px; border-radius:50% 0 50% 0;
+            background:radial-gradient(circle, rgba(255,182,193,0.95), rgba(255,192,203,0.7));
+            animation:burst-fly 1s ease-out forwards;
+        }
+        @keyframes burst-fly{
+            0%{ opacity:1; transform:translate(0,0) rotate(0deg) scale(1); }
+            100%{ opacity:0; transform:translate(var(--tx),var(--ty)) rotate(720deg) scale(0.2); }
+        }
+
+        /* 魔法波纹 */
+        .magic-ripple{
+            position:absolute; pointer-events:none; z-index:20; border-radius:50%;
+            border:2px solid rgba(255,176,136,0.35);
+            animation:ripple-expand .8s ease-out forwards;
+            top:var(--mx); left:var(--my);
+        }
+        @keyframes ripple-expand{
+            0%{ width:0; height:0; opacity:1; padding:0; }
+            100%{ width:200px; height:200px; opacity:0; transform:translate(-50%,-50%); }
+        }
+
+        /* 音频可视化 */
+        .visualizer-wrap{
+            width:100%; max-width:600px; height:36px; margin-top:8px;
+            border-radius:8px; overflow:hidden; opacity:0.5;
+        }
+        .visualizer-wrap canvas{ width:100%; height:100%; display:block; }
+
+        /* 萤火虫 */
+        .firefly{
+            position:absolute; pointer-events:none; z-index:1;
+            width:4px; height:4px; border-radius:50%;
+            background:rgba(168,255,120,0.7);
+            box-shadow:0 0 6px rgba(168,255,120,0.4), 0 0 16px rgba(168,255,120,0.12);
+            animation:firefly-float linear infinite;
+        }
+        @keyframes firefly-float{
+            0%,100%{ transform:translate(0,0) scale(0.5); opacity:0; }
+            10%{ opacity:0.9; }
+            50%{ opacity:0.5; }
+            90%{ opacity:0.7; }
+        }
+
+        /* 增强玻璃拟态 */
+        .panel, .summer-card, .star-card, .card{ backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+        @media (max-width:980px){ .panel, .summer-card, .star-card, .card{ backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); } }
+
+        /* ======================================================
            响应式
            ====================================================== */
         @media (max-width:980px){
@@ -851,10 +959,17 @@
             .noon-sun .sun-body{ width:50px; height:50px; }
             .sun-rays2{ width:140px; height:140px; }
             .moon-body{ width:45px; height:45px; }
+            .nav-dots{ right:8px; gap:8px; }
+            .nav-dots .dot{ width:8px; height:8px; }
+            .nav-dots .dot .tooltip{ display:none; }
+            .back-top{ bottom:16px; right:12px; width:34px; height:34px; font-size:15px; border-radius:10px; }
+            .visualizer-wrap{ height:28px; }
         }
     </style>
 </head>
 <body>
+<!-- 滚动进度条 -->
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
 <!-- ============================================================
      SECTION 1 — 朝 (Morning)
@@ -967,6 +1082,7 @@
                             <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
                         </div>
                     </div>
+                    <div class="visualizer-wrap" aria-hidden="true"><canvas id="visualizer"></canvas></div>
                     <audio id="bgAudio" preload="none" loop>
                         <source src="./media/music.mp3" type="audio/mpeg">
                         <source src="./media/music.ogg" type="audio/ogg">
@@ -1057,28 +1173,28 @@
     </div>
 
     <!-- 内容 -->
-    <div class="sec-inner fade-up">
+    <div class="sec-inner">
         <div class="sec-title">
             <h2>☀ 夏日的风物诗</h2>
             <p>蝉鸣、海风、西瓜、风铃——夏天是记忆中最鲜明的季节。</p>
         </div>
         <div class="summer-grid">
-            <div class="summer-card">
+            <div class="summer-card reveal">
                 <span class="ic">🌊</span>
                 <h3>海边的记忆</h3>
                 <p>夏天的海总是蓝得耀眼，浪花拍打着沙滩，带走所有烦忧。每一个夏天都值得被记住。</p>
             </div>
-            <div class="summer-card">
+            <div class="summer-card reveal">
                 <span class="ic">🍉</span>
                 <h3>西瓜与团扇</h3>
                 <p>冰镇西瓜、轻轻摇动的团扇、午后透过树叶洒下的光斑，这些是夏天最温柔的馈赠。</p>
             </div>
-            <div class="summer-card">
+            <div class="summer-card reveal">
                 <span class="ic">🎐</span>
                 <h3>风铃与蝉鸣</h3>
                 <p>玻璃风铃在午后发出清脆声响，与远处的蝉鸣交织成夏日的交响曲。闭上眼，就能感受到那个季节。</p>
             </div>
-            <div class="summer-card">
+            <div class="summer-card reveal">
                 <span class="ic">🌅</span>
                 <h3>黄昏的夏日</h3>
                 <p>夕阳将天空染成橘红色，海面波光粼粼。夏天的黄昏总是漫长而温柔，仿佛时间也为美景停留。</p>
@@ -1121,26 +1237,26 @@
     <div class="nebula" style="width:300px;height:300px;bottom:15%;right:5%;animation-duration:80s;"></div>
 
     <!-- 内容 -->
-    <div class="sec-inner fade-up">
+    <div class="sec-inner">
         <div class="sec-title">
             <h2>✦ 星空下的夜晚 ✦</h2>
             <p>每一颗流星都是宇宙写给我们的情书，每一段故事都是时间留下的印记。</p>
             <span class="badge">☾ 二次元 · 音乐 · 星空 · 思考</span>
         </div>
         <div class="star-grid">
-            <div class="star-card">
+            <div class="star-card reveal">
                 <span class="ic">🌠</span>
                 <h3>二次元之旅</h3>
                 <p>从最初接触动漫到现在，每一部作品都像一颗星星，在记忆的夜空中闪烁。那些热血、感动与泪水，构成了我心中不灭的星空。</p>
                 <span class="ft">—— 每颗星都是一个世界</span>
             </div>
-            <div class="star-card">
+            <div class="star-card reveal">
                 <span class="ic">✨</span>
                 <h3>Galgame 记忆</h3>
                 <p>那些让我心动的故事，每一个选择都像是流星，划过后留下永恒的痕迹。在文字与画面的交织中，我找到了无数个可能的自己。</p>
                 <span class="ft">—— 选择即是命运</span>
             </div>
-            <div class="star-card">
+            <div class="star-card reveal">
                 <span class="ic">🎵</span>
                 <h3>星空下的旋律</h3>
                 <p>轻音乐与星空是绝配。闭上眼，让旋律带你去往另一个世界——那里有风吹过草原的声音，有星辰旋转的静谧。</p>
@@ -1169,6 +1285,25 @@
     </div>
     <div class="copy">© li · 记录我喜欢的世界</div>
 </section>
+
+<!-- 分段导航点 -->
+<nav class="nav-dots" id="navDots" aria-label="页面导航">
+    <div class="dot active" data-target="morning">
+        <span class="tooltip">朝 · 晨曦</span>
+    </div>
+    <div class="dot" data-target="afternoon">
+        <span class="tooltip">昼 · 午后</span>
+    </div>
+    <div class="dot" data-target="night">
+        <span class="tooltip">夜 · 星空</span>
+    </div>
+    <div class="dot" data-target="footer">
+        <span class="tooltip">尾声</span>
+    </div>
+</nav>
+
+<!-- 返回顶部 -->
+<button class="back-top" id="backTop" aria-label="返回顶部">↑</button>
 
 <!-- ===== 光标 ===== -->
 <div class="cursor-circle" id="cursor"></div>
@@ -1324,6 +1459,202 @@
         const style = document.createElement('style');
         style.textContent = `@keyframes m-particle{0%{transform:translateY(0) scale(0.5);opacity:0}20%{opacity:1}80%{opacity:0.3}100%{transform:translateY(-80px) scale(1);opacity:0}}`;
         document.head.appendChild(style);
+    })();
+
+    // ========== 滚动进度条 ==========
+    (function(){
+        const bar = document.getElementById('scrollProgress');
+        if (!bar) return;
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement.scrollHeight - window.innerHeight;
+            bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+        }, {passive:true});
+    })();
+
+    // ========== 分段导航点 ==========
+    (function(){
+        const dots = document.querySelectorAll('#navDots .dot');
+        if (!dots.length) return;
+        const ids = ['morning','afternoon','night','footer'];
+        const els = ids.map(id => document.getElementById(id)).filter(Boolean);
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const idx = els.indexOf(entry.target);
+                if (idx < 0) return;
+                dots.forEach(d => d.classList.remove('active'));
+                if (dots[idx]) dots[idx].classList.add('active');
+            });
+        }, { threshold: 0.35 });
+        els.forEach(el => io.observe(el));
+        dots.forEach(d => {
+            d.addEventListener('click', () => {
+                const target = document.getElementById(d.dataset.target);
+                if (target) target.scrollIntoView({behavior:'smooth'});
+            });
+        });
+    })();
+
+    // ========== 返回顶部 ==========
+    (function(){
+        const btn = document.getElementById('backTop');
+        if (!btn) return;
+        window.addEventListener('scroll', () => {
+            btn.classList.toggle('visible', window.scrollY > window.innerHeight * 0.5);
+        }, {passive:true});
+        btn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+    })();
+
+    // ========== 滚动入场动画 (Reveal) ==========
+    (function(){
+        const els = document.querySelectorAll('.reveal');
+        if (!els.length) return;
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                // 计算同级中的索引用于错开延迟
+                const parent = el.parentElement;
+                if (parent) {
+                    const siblings = Array.from(parent.querySelectorAll(':scope > .reveal'));
+                    const idx = siblings.indexOf(el);
+                    if (idx > 0) el.style.transitionDelay = (idx * 0.08) + 's';
+                }
+                el.classList.add('revealed');
+                io.unobserve(el);
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+        els.forEach(el => io.observe(el));
+    })();
+
+    // ========== 音频可视化 ==========
+    (function(){
+        const canvas = document.getElementById('visualizer');
+        if (!canvas || !canvas.getContext) return;
+        const ctx = canvas.getContext('2d');
+        const resize = () => {
+            const p = canvas.parentElement;
+            canvas.width = p.clientWidth || 600;
+            canvas.height = p.clientHeight || 36;
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        let analyser = null, dataArray = null, src = null;
+        let running = false;
+
+        function startViz() {
+            if (running) return;
+            try {
+                const actx = new (window.AudioContext || window.webkitAudioContext)();
+                src = actx.createMediaElementSource(audio);
+                analyser = actx.createAnalyser();
+                analyser.fftSize = 128;
+                src.connect(analyser);
+                analyser.connect(actx.destination);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                running = true;
+                draw();
+            } catch(e) { /* already initialized */ }
+        }
+
+        function draw() {
+            if (!running) return;
+            requestAnimationFrame(draw);
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const len = dataArray.length;
+            const barW = canvas.width / len * 2;
+            const grad = ctx.createLinearGradient(0, canvas.height, 0, 0);
+            grad.addColorStop(0, 'rgba(138,180,255,0.1)');
+            grad.addColorStop(0.5, 'rgba(243,168,255,0.2)');
+            grad.addColorStop(1, 'rgba(255,176,136,0.12)');
+            ctx.fillStyle = grad;
+            for (let i = 0; i < len; i++) {
+                const h = (dataArray[i] / 255) * canvas.height * 0.75;
+                ctx.fillRect(i * barW, canvas.height - h, Math.max(barW - 1, 1), h);
+            }
+        }
+        audio.addEventListener('play', startViz, {once:true});
+    })();
+
+    // ========== 头像樱花爆发 ==========
+    (function(){
+        const av = document.getElementById('avatar');
+        if (!av) return;
+        av.addEventListener('click', function(e) {
+            const r = this.getBoundingClientRect();
+            const cx = r.left + r.width / 2;
+            const cy = r.top + r.height / 2;
+            for (let i = 0; i < 28; i++) {
+                const p = document.createElement('div');
+                p.className = 'sakura-burst';
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 200 + 50;
+                p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+                p.style.left = cx + 'px'; p.style.top = cy + 'px';
+                const sz = Math.random() * 6 + 4;
+                p.style.width = sz + 'px'; p.style.height = sz + 'px';
+                p.style.animationDuration = (Math.random() * 0.5 + 0.6) + 's';
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1500);
+            }
+        });
+    })();
+
+    // ========== 魔法阵波纹 ==========
+    (function(){
+        const mc = document.querySelector('.magic-circle');
+        if (!mc) return;
+        mc.addEventListener('click', function(e) {
+            const r = this.getBoundingClientRect();
+            const x = e.clientX - r.left;
+            const y = e.clientY - r.top;
+            const ripple = document.createElement('div');
+            ripple.className = 'magic-ripple';
+            ripple.style.top = y + 'px'; ripple.style.left = x + 'px';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 900);
+        });
+    })();
+
+    // ========== 萤火虫 (夜间) ==========
+    (function(){
+        const night = document.getElementById('night');
+        if (!night) return;
+        for (let i = 0; i < 18; i++) {
+            const f = document.createElement('div');
+            f.className = 'firefly';
+            f.style.left = (Math.random() * 88 + 6) + '%';
+            f.style.top = (Math.random() * 78 + 12) + '%';
+            const dur = Math.random() * 5 + 7;
+            f.style.animationDuration = dur + 's';
+            f.style.animationDelay = (Math.random() * 10) + 's';
+            const sz = Math.random() * 2.5 + 2;
+            f.style.width = sz + 'px'; f.style.height = sz + 'px';
+            night.appendChild(f);
+        }
+    })();
+
+    // ========== 视差滚动 (Parallax) ==========
+    (function(){
+        const night = document.getElementById('night');
+        const stars = document.getElementById('starfield');
+        const moon = document.querySelector('.moon');
+        const milky = document.querySelector('.milky-way');
+        const noonSun = document.querySelector('.noon-sun');
+        const rays = document.querySelector('.sun-rays');
+        // 仅对没有 CSS 动画的装饰元素应用视差，避免冲突
+        const scrollHandler = () => {
+            const sy = window.scrollY;
+            if (rays) rays.style.transform = `translateY(${sy * 0.03}px)`;
+            if (noonSun) noonSun.style.transform = `translateY(${(sy - window.innerHeight) * 0.04}px)`;
+            if (moon) moon.style.transform = `translateY(${(sy - window.innerHeight * 2) * 0.03}px)`;
+            if (milky) milky.style.transform = `rotate(-15deg) translateY(${(sy - window.innerHeight * 2) * 0.02}px)`;
+            if (stars) stars.style.transform = `translateY(${(sy - window.innerHeight * 2) * 0.015}px)`;
+        };
+        window.addEventListener('scroll', scrollHandler, {passive:true});
     })();
 
     console.log("提示：头像 assets/avatar.jpg | 背景图 assets/bg.jpg | 音频 media/music.mp3");
