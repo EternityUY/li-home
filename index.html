@@ -866,8 +866,10 @@
 
         /* 音频可视化 */
         .visualizer-wrap{
-            width:100%; max-width:600px; height:36px; margin-top:8px;
-            border-radius:8px; overflow:hidden; opacity:0.5;
+            width:100%; max-width:600px; height:42px; margin-top:8px;
+            border-radius:10px; overflow:hidden; opacity:0.7;
+            background: rgba(255,255,255,0.02);
+            border:1px solid rgba(255,255,255,0.03);
         }
         .visualizer-wrap canvas{ width:100%; height:100%; display:block; }
 
@@ -1394,13 +1396,13 @@
     playBtn.addEventListener('click', async e => {
         e.preventDefault();
         if (audio.paused) { try { await audio.play(); playBtn.textContent='⏸'; if(quickPlay) quickPlay.textContent='⏸ 暂停'; } catch(err){} }
-        else { audio.pause(); playBtn.textContent='▶'; if(quickPlay) quickPlay.textContent='▶ 听轻音乐'; }
+        else if (!isAutoPlaying) { audio.pause(); playBtn.textContent='▶'; if(quickPlay) quickPlay.textContent='▶ 听轻音乐'; }
     });
     if (quickPlay) quickPlay.addEventListener('click', e => { e.preventDefault(); playBtn.click(); });
 
     // ========== 自动播放 ==========
-    let autoPlayed = false;
-    const tryPlay = async () => { if(autoPlayed) return; autoPlayed=true; try { audio.preload='auto'; await audio.play(); playBtn.textContent='⏸'; if(quickPlay) quickPlay.textContent='⏸ 暂停'; } catch(e){} };
+    let autoPlayed = false, isAutoPlaying = false;
+    const tryPlay = async () => { if(autoPlayed) return; autoPlayed=true; isAutoPlaying=true; try { audio.preload='auto'; await audio.play(); playBtn.textContent='⏸'; if(quickPlay) quickPlay.textContent='⏸ 暂停'; } catch(e){} setTimeout(()=>{isAutoPlaying=false},300); };
     ['click','keydown','touchstart'].forEach(ev => document.addEventListener(ev, ()=>{ if(!autoPlayed) tryPlay(); }, {once:true}));
 
     // ========== 时间 + 问候语 ==========
@@ -1532,22 +1534,22 @@
         const canvas = document.getElementById('visualizer');
         if (!canvas || !canvas.getContext) return;
         const ctx = canvas.getContext('2d');
+        let analyser = null, dataArray = null;
+        let running = false;
+
         const resize = () => {
             const p = canvas.parentElement;
-            canvas.width = p.clientWidth || 600;
-            canvas.height = p.clientHeight || 36;
+            if (p) { canvas.width = p.clientWidth || 600; canvas.height = p.clientHeight || 36; }
         };
         resize();
         window.addEventListener('resize', resize);
 
-        let analyser = null, dataArray = null, src = null;
-        let running = false;
-
         function startViz() {
             if (running) return;
+            audio.preload = 'auto';
             try {
                 const actx = new (window.AudioContext || window.webkitAudioContext)();
-                src = actx.createMediaElementSource(audio);
+                const src = actx.createMediaElementSource(audio);
                 analyser = actx.createAnalyser();
                 analyser.fftSize = 128;
                 src.connect(analyser);
@@ -1555,7 +1557,7 @@
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
                 running = true;
                 draw();
-            } catch(e) { /* already initialized */ }
+            } catch(e) { console.warn('🎵 可视化初始化失败:', e.message); }
         }
 
         function draw() {
@@ -1564,18 +1566,33 @@
             analyser.getByteFrequencyData(dataArray);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const len = dataArray.length;
-            const barW = canvas.width / len * 2;
+            const barW = canvas.width / Math.max(len, 1);
             const grad = ctx.createLinearGradient(0, canvas.height, 0, 0);
-            grad.addColorStop(0, 'rgba(138,180,255,0.1)');
-            grad.addColorStop(0.5, 'rgba(243,168,255,0.2)');
-            grad.addColorStop(1, 'rgba(255,176,136,0.12)');
+            grad.addColorStop(0, 'rgba(138,180,255,0.12)');
+            grad.addColorStop(0.3, 'rgba(243,168,255,0.22)');
+            grad.addColorStop(0.7, 'rgba(255,176,136,0.15)');
+            grad.addColorStop(1, 'rgba(138,180,255,0.06)');
             ctx.fillStyle = grad;
+            const gap = 1.5;
             for (let i = 0; i < len; i++) {
                 const h = (dataArray[i] / 255) * canvas.height * 0.75;
-                ctx.fillRect(i * barW, canvas.height - h, Math.max(barW - 1, 1), h);
+                const x = i * barW + gap / 2;
+                const w = Math.max(barW - gap, 1);
+                if (h > 1) ctx.fillRect(x, canvas.height - h, w, h);
             }
         }
-        audio.addEventListener('play', startViz, {once:true});
+
+        // 在 audio.play() 之前初始化（capture phase 先于 bubble phase 执行）
+        ['click','keydown','touchstart'].forEach(function(ev) {
+            document.addEventListener(ev, function initEarly() {
+                if (!running && audio.paused) startViz();
+            }, { once: true, capture: true });
+        });
+
+        // fallback: play 事件触发时如果还没初始化则重试
+        audio.addEventListener('play', function() {
+            if (!running) startViz();
+        });
     })();
 
     // ========== 头像樱花爆发 ==========
