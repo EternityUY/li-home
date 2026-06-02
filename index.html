@@ -6,15 +6,10 @@
     <title>li — 记录我喜欢的世界</title>
     <link rel="icon" href="./assets/favicon.ico" />
     <style>
-        /* ========== 基础 ========== */
+        /* ==============================
+           基础 & 全局
+           ============================== */
         :root{
-            --bg-overlay: rgba(6,10,20,0.56);
-            --card-bg: rgba(255,255,255,0.03);
-            --accent: #8ab4ff;
-            --accent-2: #f3a8ff;
-            --muted: #aebdd6;
-            --text: #eaf2ff;
-            --glass-border: rgba(255,255,255,0.06);
             --radius: 14px;
             --maxwidth: 1160px;
         }
@@ -25,83 +20,105 @@
         }
         body{
             font-family: "Inter", "PingFang SC", "Hiragino Sans GB", "Segoe UI", Roboto, Arial, sans-serif;
-            background: #071029;
-            color:var(--text);
             -webkit-font-smoothing:antialiased;
             -moz-osx-font-smoothing:grayscale;
             overflow-x:hidden;
+            background: #071029;
         }
-
-        /* ========== 公用的全屏段 ========== */
         .section{
-            min-height:100vh;
-            width:100%;
-            position:relative;
+            min-height:100vh; width:100%; position:relative;
             scroll-snap-align:start;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:40px 20px;
+            display:flex; align-items:center; justify-content:center;
+            padding:40px 20px; overflow:hidden;
         }
+        .fade-up{ opacity:0; transform:translateY(10px); animation: fadeUp .6s forwards; }
+        .delay-1{ animation-delay:0.06s; }
+        .delay-2{ animation-delay:0.14s; }
+        .delay-3{ animation-delay:0.3s; }
+        @keyframes fadeUp{ to{ opacity:1; transform:none; } }
 
-        /* ========== Section 1 — Hero ========== */
-        .hero-section{
+        /* ========== 滚动提示 ========== */
+        .scroll-hint{
+            position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+            z-index:10; display:flex; flex-direction:column; align-items:center; gap:6px;
+            font-size:12px; opacity:0.6; animation:bounce 2s infinite; cursor:pointer;
+        }
+        .scroll-hint .arrow{
+            width:20px; height:20px;
+            border-right:2px solid; border-bottom:2px solid;
+            transform:rotate(45deg); opacity:0.5;
+        }
+        @keyframes bounce{ 0%,100%{ transform:translateX(-50%) translateY(0); } 50%{ transform:translateX(-50%) translateY(8px); } }
+
+        /* ========== 光标 ========== */
+        .cursor-circle{
+            position:fixed; pointer-events:none; z-index:99999;
+            width:36px; height:36px; border-radius:50%; transform:translate(-50%,-50%);
+            mix-blend-mode:screen; opacity:0.95;
+            background: radial-gradient(circle at 40% 30%, rgba(250,250,255,0.9), rgba(138,180,255,0.22) 30%, rgba(138,180,255,0.06) 60%, transparent 70%);
+            transition: width .14s, height .14s, opacity .18s;
+        }
+        .cursor-circle.big{ width:84px; height:84px; opacity:0.6; }
+
+        /* ======================================================
+           SECTION 1 — 朝 (Morning)  金色晨曦
+           ====================================================== */
+        .morning{
             background: url('./assets/bg.jpg') center center / cover no-repeat fixed;
-            background-color: #071029;
-            position:relative;
+            background-color: #2a1f0e;
         }
-        .hero-section::before{
-            content:'';
-            position:absolute;
-            inset:0;
-            background: linear-gradient(180deg, rgba(7,16,41,0.55) 0%, rgba(7,18,42,0.45) 40%, rgba(5,23,40,0.6) 100%);
+        .morning::before{
+            content:''; position:absolute; inset:0;
+            background: linear-gradient(170deg,
+                rgba(60,35,15,0.45) 0%,
+                rgba(40,25,15,0.50) 30%,
+                rgba(20,15,20,0.60) 70%,
+                rgba(10,10,25,0.70) 100%);
             z-index:0;
         }
-        .hero-section .bg-slot{
-            position:absolute;
-            inset:0;
-            z-index:0;
-            pointer-events:none;
-            background-image:
-                radial-gradient(circle at 12% 15%, rgba(132,94,255,0.08), transparent 5%),
-                radial-gradient(circle at 88% 80%, rgba(138,180,255,0.06), transparent 6%);
-            mix-blend-mode:overlay;
+        /* 晨曦光晕 */
+        .sun-rays{
+            position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;
         }
-
-        .wrap{
-            width:100%;
-            max-width:var(--maxwidth);
-            display:grid;
-            grid-template-columns: 360px 1fr;
-            gap:28px;
-            padding:36px;
-            border-radius:20px;
-            position:relative;
-            z-index:2;
-            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-            border:1px solid rgba(255,255,255,0.03);
-            box-shadow: 0 18px 50px rgba(2,6,23,0.65);
-            margin:20px auto;
+        .sun-rays::before{
+            content:''; position:absolute;
+            top:-30%; left:-20%;
+            width:80%; height:80%;
+            background: radial-gradient(circle at 30% 40%,
+                rgba(255,200,130,0.12) 0%,
+                rgba(255,160,80,0.06) 25%,
+                rgba(255,120,60,0.02) 50%,
+                transparent 70%);
+            animation: sun-glow 8s ease-in-out infinite alternate;
+            border-radius:50%;
         }
+        .sun-rays::after{
+            content:''; position:absolute; inset:0;
+            background:
+                repeating-conic-gradient(from 0deg at 30% 30%,
+                    transparent 0deg, rgba(255,200,150,0.015) 2deg, transparent 4deg);
+            animation: sun-beam 20s linear infinite;
+            opacity:0.5;
+        }
+        @keyframes sun-glow{
+            0%{ transform:scale(1) translate(0,0); opacity:0.7; }
+            100%{ transform:scale(1.15) translate(20px,-20px); opacity:1; }
+        }
+        @keyframes sun-beam{
+            0%{ transform:rotate(0deg) scale(1.5); }
+            100%{ transform:rotate(360deg) scale(1.5); }
+        }
+        .morning, .morning * { --accent: #ffb088; --accent-2: #ff7e5f; --muted: #d4c5b0; --text: #fef6ed; --glass-border: rgba(255,255,255,0.06); }
 
-        /* 樱花雨 — 覆盖全页面 */
-        .sakura-container{
-            position:fixed;
-            top:0; left:0;
-            width:100%;
-            height:100%;
-            pointer-events:none;
-            z-index:999;
-            overflow:hidden;
+        /* ========== 樱花雨 (只在朝) ========== */
+        .sakura-area{
+            position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden;
         }
         .sakura{
             position:absolute;
             background:radial-gradient(circle, rgba(255,182,193,0.9), rgba(255,192,203,0.7));
-            border-radius:50% 0 50% 0;
-            transform:rotate(45deg);
-            opacity:0.75;
-            animation:fall linear infinite;
-            filter:blur(0.5px);
+            border-radius:50% 0 50% 0; transform:rotate(45deg);
+            opacity:0.75; animation:fall linear infinite; filter:blur(0.5px);
         }
         .sakura:nth-child(odd){ width:10px; height:10px; }
         .sakura:nth-child(even){ width:14px; height:14px; }
@@ -112,413 +129,441 @@
             50%{ transform:translateY(50vh) translateX(20px) rotate(360deg); }
             100%{ transform:translateY(110vh) translateX(40px) rotate(720deg); opacity:0; }
         }
-        .sakura-left{ left:5%; animation-duration:15s; animation-delay:0s; }
-        .sakura-left:nth-child(1){ left:8%; animation-duration:18s; animation-delay:0s; }
-        .sakura-left:nth-child(2){ left:12%; animation-duration:20s; animation-delay:2s; }
-        .sakura-left:nth-child(3){ left:6%; animation-duration:16s; animation-delay:4s; }
-        .sakura-left:nth-child(4){ left:10%; animation-duration:22s; animation-delay:6s; }
-        .sakura-left:nth-child(5){ left:7%; animation-duration:17s; animation-delay:8s; }
-        .sakura-left:nth-child(6){ left:11%; animation-duration:19s; animation-delay:10s; }
-        .sakura-left:nth-child(7){ left:9%; animation-duration:21s; animation-delay:12s; }
-        .sakura-left:nth-child(8){ left:5%; animation-duration:15s; animation-delay:14s; }
-        .sakura-right{ right:5%; animation-duration:16s; animation-delay:1s; }
-        .sakura-right:nth-child(1){ right:8%; animation-duration:19s; animation-delay:1s; }
-        .sakura-right:nth-child(2){ right:12%; animation-duration:21s; animation-delay:3s; }
-        .sakura-right:nth-child(3){ right:6%; animation-duration:17s; animation-delay:5s; }
-        .sakura-right:nth-child(4){ right:10%; animation-duration:20s; animation-delay:7s; }
-        .sakura-right:nth-child(5){ right:7%; animation-duration:18s; animation-delay:9s; }
-        .sakura-right:nth-child(6){ right:11%; animation-duration:22s; animation-delay:11s; }
-        .sakura-right:nth-child(7){ right:9%; animation-duration:15s; animation-delay:13s; }
-        .sakura-right:nth-child(8){ right:5%; animation-duration:16s; animation-delay:15s; }
+        .sakura-l{ left:5%; }
+        .sakura-l:nth-child(1){ left:8%; animation-duration:18s; animation-delay:0s; }
+        .sakura-l:nth-child(2){ left:12%; animation-duration:20s; animation-delay:2s; }
+        .sakura-l:nth-child(3){ left:6%; animation-duration:16s; animation-delay:4s; }
+        .sakura-l:nth-child(4){ left:10%; animation-duration:22s; animation-delay:6s; }
+        .sakura-l:nth-child(5){ left:7%; animation-duration:17s; animation-delay:8s; }
+        .sakura-l:nth-child(6){ left:11%; animation-duration:19s; animation-delay:10s; }
+        .sakura-l:nth-child(7){ left:9%; animation-duration:21s; animation-delay:12s; }
+        .sakura-l:nth-child(8){ left:5%; animation-duration:15s; animation-delay:14s; }
+        .sakura-r{ right:5%; }
+        .sakura-r:nth-child(1){ right:8%; animation-duration:19s; animation-delay:1s; }
+        .sakura-r:nth-child(2){ right:12%; animation-duration:21s; animation-delay:3s; }
+        .sakura-r:nth-child(3){ right:6%; animation-duration:17s; animation-delay:5s; }
+        .sakura-r:nth-child(4){ right:10%; animation-duration:20s; animation-delay:7s; }
+        .sakura-r:nth-child(5){ right:7%; animation-duration:18s; animation-delay:9s; }
+        .sakura-r:nth-child(6){ right:11%; animation-duration:22s; animation-delay:11s; }
+        .sakura-r:nth-child(7){ right:9%; animation-duration:15s; animation-delay:13s; }
+        .sakura-r:nth-child(8){ right:5%; animation-duration:16s; animation-delay:15s; }
 
-        /* 左侧卡片 */
+        /* 朝 — 卡片布局 */
+        .wrap{
+            width:100%; max-width:var(--maxwidth);
+            display:grid; grid-template-columns:360px 1fr; gap:28px; padding:36px;
+            border-radius:20px; position:relative; z-index:2;
+            background: linear-gradient(180deg, rgba(255,248,240,0.02), rgba(255,240,230,0.008));
+            border:1px solid rgba(255,248,240,0.04);
+            box-shadow: 0 18px 50px rgba(20,10,0,0.55);
+            margin:20px auto; color:var(--text);
+        }
         .card{
-            position:relative;
-            z-index:2;
-            padding:26px;
-            border-radius:var(--radius);
-            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));
+            position:relative; z-index:2; padding:26px; border-radius:var(--radius);
+            background: linear-gradient(180deg, rgba(255,248,240,0.02), rgba(255,248,240,0.008));
             border:1px solid var(--glass-border);
-            display:flex;
-            flex-direction:column;
-            gap:16px;
-            backdrop-filter: blur(6px);
+            display:flex; flex-direction:column; gap:16px; backdrop-filter:blur(6px);
         }
-        .avatar-wrap{
-            display:flex;
-            gap:16px;
-            align-items:center;
-        }
+        .avatar-wrap{ display:flex; gap:16px; align-items:center; }
         .avatar{
-            width:124px;
-            height:124px;
-            border-radius:16px;
-            overflow:hidden;
+            width:124px; height:124px; border-radius:16px; overflow:hidden;
             background: linear-gradient(135deg,var(--accent),var(--accent-2));
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:#041428;
-            font-weight:800;
-            font-size:22px;
-            box-shadow: 0 14px 36px rgba(2,6,23,0.55);
+            display:flex; align-items:center; justify-content:center; color:#2a1a0e;
+            font-weight:800; font-size:22px;
+            box-shadow: 0 14px 36px rgba(20,10,0,0.55);
             transition:transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s;
-            flex:0 0 124px;
-            cursor:pointer;
-            position:relative;
+            flex:0 0 124px; cursor:pointer; position:relative;
         }
         .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
-        .avatar:hover{ transform:translateY(-6px) rotate(-1deg) scale(1.03); box-shadow: 0 28px 64px rgba(2,6,23,0.6); }
+        .avatar:hover{ transform:translateY(-6px) rotate(-1deg) scale(1.03); box-shadow: 0 28px 64px rgba(20,10,0,0.6); }
         .intro{ min-width:0; }
         .name{ margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px; }
         .subtitle{ margin:6px 0 12px 0; color:var(--muted); font-size:13px; line-height:1.4; }
         .tags{ display:flex; gap:8px; flex-wrap:wrap; }
         .tag{
-            padding:6px 10px; border-radius:999px;
-            font-size:13px; color:var(--muted);
-            background: linear-gradient(90deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));
-            border:1px solid rgba(255,255,255,0.02);
+            padding:6px 10px; border-radius:999px; font-size:13px; color:var(--muted);
+            background: linear-gradient(90deg, rgba(255,248,240,0.012), rgba(255,248,240,0.006));
+            border:1px solid rgba(255,248,240,0.02);
         }
         .actions{ display:flex; gap:10px; margin-top:8px; }
         .btn{
             display:inline-flex; align-items:center; gap:8px;
             padding:10px 14px; border-radius:12px; font-weight:700;
-            cursor:pointer; color:var(--text); font-size:14px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));
-            border:1px solid rgba(255,255,255,0.02); text-decoration:none;
-            transition: transform .18s, box-shadow .18s;
+            cursor:pointer; font-size:14px; text-decoration:none;
+            background: linear-gradient(90deg, rgba(255,248,240,0.008), rgba(255,248,240,0.005));
+            border:1px solid rgba(255,248,240,0.02); transition: transform .18s, box-shadow .18s;
         }
-        .btn:hover{ transform:translateY(-6px); box-shadow: 0 16px 40px rgba(2,6,23,0.45); }
+        .btn{ color:var(--text); }
+        .btn:hover{ transform:translateY(-6px); box-shadow: 0 16px 40px rgba(20,10,0,0.45); }
         .btn.primary{
-            background: linear-gradient(90deg, rgba(138,180,255,0.12), rgba(243,168,255,0.06));
-            border:1px solid rgba(138,180,255,0.14);
-            color:#eaf4ff;
+            background: linear-gradient(90deg, rgba(255,176,136,0.15), rgba(255,126,95,0.08));
+            border:1px solid rgba(255,176,136,0.14);
         }
-        .meta{ color:var(--muted); font-size:14px; line-height:1.5; }
 
-        /* 时间容器 */
-        .time-container{
-            position:relative;
-            padding:20px;
-            margin:20px 0;
-            border-radius:var(--radius);
-            background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.008));
-            border:1px solid rgba(255,255,255,0.06);
-            overflow:hidden;
-            text-align:center;
+        /* 朝 — 时间 */
+        .time-box{
+            position:relative; padding:20px; margin:20px 0; border-radius:var(--radius);
+            background:linear-gradient(180deg, rgba(255,248,240,0.015), rgba(255,248,240,0.008));
+            border:1px solid rgba(255,255,255,0.06); overflow:hidden; text-align:center;
         }
-        .time-container::before{
-            content:'';
-            position:absolute;
-            top:0; left:-100%;
-            width:100%; height:100%;
-            background:linear-gradient(90deg,
-                transparent 0%,
-                rgba(138,180,255,0.15) 30%,
-                rgba(243,168,255,0.15) 50%,
-                rgba(138,180,255,0.15) 70%,
-                transparent 100%);
-            animation:shine 4s infinite;
-            pointer-events:none;
+        .time-box::before{
+            content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background:linear-gradient(90deg, transparent 0%, rgba(255,176,136,0.18) 30%, rgba(255,126,95,0.18) 50%, rgba(255,176,136,0.18) 70%, transparent 100%);
+            animation:shine 4s infinite; pointer-events:none;
         }
-        @keyframes shine{
-            0%{ left:-100%; }
-            50%{ left:100%; }
-            100%{ left:100%; }
-        }
-        .time-display-main{ position:relative; z-index:1; }
-        .time-label{ font-size:12px; color:var(--muted); margin-bottom:8px; opacity:0.8; }
-        .time-value{
-            font-size:24px; font-weight:700; color:var(--text);
+        @keyframes shine{ 0%{ left:-100%; } 50%{ left:100%; } 100%{ left:100%; } }
+        .time-inner{ position:relative; z-index:1; }
+        .time-lbl{ font-size:12px; color:var(--muted); margin-bottom:8px; opacity:0.8; }
+        .time-val{
+            font-size:24px; font-weight:700;
             background:linear-gradient(90deg, var(--text), var(--accent));
             -webkit-background-clip:text; background-clip:text;
-            -webkit-text-fill-color:transparent;
-            letter-spacing:1px;
+            -webkit-text-fill-color:transparent; letter-spacing:1px;
         }
-        .date-value{ font-size:13px; color:var(--muted); margin-top:6px; opacity:0.9; }
+        .date-val{ font-size:13px; color:var(--muted); margin-top:6px; opacity:0.9; }
+        .greeting{ font-size:14px; color:var(--accent); margin-top:6px; font-weight:600; }
 
-        /* 魔法阵 */
-        .magic-circle-container{
-            position:relative;
-            margin:24px 0;
-            padding:24px;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            min-height:180px;
+        /* 朝 — 魔法阵 (金色调) */
+        .magic-box{
+            position:relative; margin:24px 0; padding:24px;
+            display:flex; flex-direction:column; justify-content:center;
+            align-items:center; min-height:180px;
         }
         .magic-circle{
-            position:relative;
-            width:120px;
-            height:120px;
-            margin-bottom:16px;
+            position:relative; width:120px; height:120px; margin-bottom:16px;
         }
         .magic-circle::before{
-            content:'';
-            position:absolute;
-            inset:0;
-            border:2px solid rgba(138,180,255,0.3);
-            border-radius:50%;
-            box-shadow:0 0 20px rgba(138,180,255,0.2), inset 0 0 20px rgba(243,168,255,0.1);
+            content:''; position:absolute; inset:0;
+            border:2px solid rgba(255,176,136,0.3); border-radius:50%;
+            box-shadow:0 0 20px rgba(255,176,136,0.2), inset 0 0 20px rgba(255,126,95,0.1);
         }
         .magic-circle::after{
-            content:'';
-            position:absolute;
-            inset:15px;
-            border:1px solid rgba(243,168,255,0.25);
-            border-radius:50%;
-            box-shadow:0 0 15px rgba(243,168,255,0.15);
+            content:''; position:absolute; inset:15px;
+            border:1px solid rgba(255,126,95,0.25); border-radius:50%;
+            box-shadow:0 0 15px rgba(255,126,95,0.15);
         }
-        .triangle-ring-outer{
-            position:absolute;
-            inset:0;
-            animation:rotate-slow 30s linear infinite;
+        .tri-ring{ position:absolute; inset:0; animation:rot 30s linear infinite; }
+        .tri-ring-in{ position:absolute; inset:20px; animation:rot-rev 25s linear infinite; }
+        @keyframes rot{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
+        @keyframes rot-rev{ 0%{ transform:rotate(360deg); } 100%{ transform:rotate(0deg); } }
+        .tri{
+            position:absolute; width:0; height:0;
+            border-left:8px solid transparent; border-right:8px solid transparent;
+            border-bottom:14px solid rgba(255,176,136,0.5);
+            filter:drop-shadow(0 0 4px rgba(255,176,136,0.6));
+            left:50%; top:50%; transform-origin:0 -45px;
         }
-        .triangle-ring-inner{
-            position:absolute;
-            inset:20px;
-            animation:rotate-slow-reverse 25s linear infinite;
+        .tri-ring .tri:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
+        .tri-ring .tri:nth-child(2){ transform:translate(-50%,-50%) rotate(45deg); }
+        .tri-ring .tri:nth-child(3){ transform:translate(-50%,-50%) rotate(90deg); }
+        .tri-ring .tri:nth-child(4){ transform:translate(-50%,-50%) rotate(135deg); }
+        .tri-ring .tri:nth-child(5){ transform:translate(-50%,-50%) rotate(180deg); }
+        .tri-ring .tri:nth-child(6){ transform:translate(-50%,-50%) rotate(225deg); }
+        .tri-ring .tri:nth-child(7){ transform:translate(-50%,-50%) rotate(270deg); }
+        .tri-ring .tri:nth-child(8){ transform:translate(-50%,-50%) rotate(315deg); }
+        .tri-ring-in .tri{
+            border-left:6px solid transparent; border-right:6px solid transparent;
+            border-bottom:10px solid rgba(255,126,95,0.5);
+            filter:drop-shadow(0 0 3px rgba(255,126,95,0.6)); transform-origin:0 -35px;
         }
-        @keyframes rotate-slow{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
-        @keyframes rotate-slow-reverse{ 0%{ transform:rotate(360deg); } 100%{ transform:rotate(0deg); } }
-        .magic-triangle{
-            position:absolute;
-            width:0; height:0;
-            border-left:8px solid transparent;
-            border-right:8px solid transparent;
-            border-bottom:14px solid rgba(138,180,255,0.5);
-            filter:drop-shadow(0 0 4px rgba(138,180,255,0.6));
-            left:50%; top:50%;
-            transform-origin:0 -45px;
-        }
-        .triangle-ring-outer .magic-triangle:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
-        .triangle-ring-outer .magic-triangle:nth-child(2){ transform:translate(-50%,-50%) rotate(45deg); }
-        .triangle-ring-outer .magic-triangle:nth-child(3){ transform:translate(-50%,-50%) rotate(90deg); }
-        .triangle-ring-outer .magic-triangle:nth-child(4){ transform:translate(-50%,-50%) rotate(135deg); }
-        .triangle-ring-outer .magic-triangle:nth-child(5){ transform:translate(-50%,-50%) rotate(180deg); }
-        .triangle-ring-outer .magic-triangle:nth-child(6){ transform:translate(-50%,-50%) rotate(225deg); }
-        .triangle-ring-outer .magic-triangle:nth-child(7){ transform:translate(-50%,-50%) rotate(270deg); }
-        .triangle-ring-outer .magic-triangle:nth-child(8){ transform:translate(-50%,-50%) rotate(315deg); }
-        .triangle-ring-inner .magic-triangle{
-            border-left:6px solid transparent;
-            border-right:6px solid transparent;
-            border-bottom:10px solid rgba(243,168,255,0.5);
-            filter:drop-shadow(0 0 3px rgba(243,168,255,0.6));
-            transform-origin:0 -35px;
-        }
-        .triangle-ring-inner .magic-triangle:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
-        .triangle-ring-inner .magic-triangle:nth-child(2){ transform:translate(-50%,-50%) rotate(60deg); }
-        .triangle-ring-inner .magic-triangle:nth-child(3){ transform:translate(-50%,-50%) rotate(120deg); }
-        .triangle-ring-inner .magic-triangle:nth-child(4){ transform:translate(-50%,-50%) rotate(180deg); }
-        .triangle-ring-inner .magic-triangle:nth-child(5){ transform:translate(-50%,-50%) rotate(240deg); }
-        .triangle-ring-inner .magic-triangle:nth-child(6){ transform:translate(-50%,-50%) rotate(300deg); }
-        .magic-center{
-            position:absolute;
-            left:50%; top:50%;
-            transform:translate(-50%,-50%);
-            width:8px; height:8px;
-            border-radius:50%;
-            background:radial-gradient(circle, rgba(138,180,255,0.9), rgba(243,168,255,0.6));
-            box-shadow:0 0 15px rgba(138,180,255,0.8), 0 0 25px rgba(243,168,255,0.5);
+        .tri-ring-in .tri:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
+        .tri-ring-in .tri:nth-child(2){ transform:translate(-50%,-50%) rotate(60deg); }
+        .tri-ring-in .tri:nth-child(3){ transform:translate(-50%,-50%) rotate(120deg); }
+        .tri-ring-in .tri:nth-child(4){ transform:translate(-50%,-50%) rotate(180deg); }
+        .tri-ring-in .tri:nth-child(5){ transform:translate(-50%,-50%) rotate(240deg); }
+        .tri-ring-in .tri:nth-child(6){ transform:translate(-50%,-50%) rotate(300deg); }
+        .magic-dot{
+            position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+            width:8px; height:8px; border-radius:50%;
+            background:radial-gradient(circle, rgba(255,176,136,0.9), rgba(255,126,95,0.6));
+            box-shadow:0 0 15px rgba(255,176,136,0.8), 0 0 25px rgba(255,126,95,0.5);
             z-index:10;
         }
-        .magic-text{
-            position:relative;
-            z-index:1;
-            font-size:13px;
-            color:var(--text);
-            font-weight:600;
-            text-align:center;
-            line-height:1.6;
-            margin-top:8px;
+        .magic-txt{
+            position:relative; z-index:1; font-size:13px; font-weight:600;
+            text-align:center; line-height:1.6; margin-top:8px;
             background:linear-gradient(90deg, var(--text), var(--accent));
             -webkit-background-clip:text; background-clip:text;
             -webkit-text-fill-color:transparent;
         }
 
-        /* 右侧主内容 */
+        .card-foot{ margin-top:auto; color:var(--muted); font-size:13px; display:flex; gap:12px; align-items:center; }
+        .card-foot a{ color:var(--muted); text-decoration:none; border-bottom:1px dashed rgba(255,255,255,0.03); padding-bottom:1px; }
+        .card-foot a:hover{ color:var(--accent); }
+
+        /* 朝 — 右侧 */
         .main{
-            position:relative;
-            z-index:2;
-            padding:28px;
-            border-radius:var(--radius);
-            background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
-            border:1px solid rgba(255,255,255,0.02);
-            display:flex;
-            flex-direction:column;
-            gap:16px;
+            position:relative; z-index:2; padding:28px; border-radius:var(--radius);
+            background: linear-gradient(180deg, rgba(255,248,240,0.01), rgba(255,248,240,0.005));
+            border:1px solid rgba(255,248,240,0.02);
+            display:flex; flex-direction:column; gap:16px;
         }
-        .hero{ display:flex; gap:18px; align-items:flex-start; margin-bottom:8px; }
+        .hero{ display:flex; gap:18px; align-items:flex-start; margin-bottom:8px; flex-wrap:wrap; }
         .quote{ flex:1; min-width:0; }
         .quote h1{
             margin:0 0 12px 0; font-size:30px; line-height:1.2; letter-spacing:-0.4px;
-            background: linear-gradient(90deg,#ffffff,#dbeeff 60%);
+            background: linear-gradient(90deg,var(--text),var(--accent) 60%);
             -webkit-background-clip:text; background-clip:text;
-            -webkit-text-fill-color:transparent; color:transparent;
+            -webkit-text-fill-color:transparent;
         }
         .quote p{ margin:0 0 12px 0; color:var(--muted); font-size:15px; line-height:1.6; }
         .stats{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
         .stat{
-            background:var(--card-bg); padding:10px 12px; border-radius:12px;
-            color:var(--muted); font-weight:700; font-size:13px; border:1px solid rgba(255,255,255,0.02);
+            background: rgba(255,248,240,0.02); padding:10px 12px; border-radius:12px;
+            color:var(--muted); font-weight:700; font-size:13px; border:1px solid rgba(255,248,240,0.02);
             white-space:nowrap;
         }
-        .grid{
-            display:grid;
-            grid-template-columns: 1fr 1fr;
-            gap:14px;
-            margin-top:6px;
-        }
+        .grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:6px; }
         .panel{
             padding:14px; border-radius:12px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.008), rgba(255,255,255,0.004));
-            border:1px solid rgba(255,255,255,0.02);
-            transition: transform .28s, box-shadow .28s;
-            cursor:default;
-            min-height:110px;
+            background: linear-gradient(180deg, rgba(255,248,240,0.008), rgba(255,248,240,0.004));
+            border:1px solid rgba(255,248,240,0.02);
+            transition: transform .28s, box-shadow .28s; cursor:default; min-height:110px;
         }
-        .panel:hover{ transform:translateY(-8px); box-shadow: 0 18px 40px rgba(2,6,23,0.44); }
+        .panel:hover{ transform:translateY(-8px); box-shadow: 0 18px 40px rgba(20,10,0,0.44); }
         .panel h3{ margin:0 0 8px 0; font-size:16px; }
         .panel p{ margin:0; color:var(--muted); font-size:14px; line-height:1.5; }
-        .list{
-            margin:8px 0 0 0; padding:0; list-style:none;
-            color:var(--muted); font-size:14px; line-height:1.6;
-        }
+        .list{ margin:8px 0 0 0; padding:0; list-style:none; color:var(--muted); font-size:14px; line-height:1.6; }
         .list li{ padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.02); }
         .list li:last-child{ border-bottom:none; }
-
         .quotes{ display:flex; flex-direction:column; gap:10px; }
         .quote-item{
             padding:12px; border-radius:10px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));
-            border:1px solid rgba(255,255,255,0.02);
+            background: linear-gradient(90deg, rgba(255,248,240,0.012), rgba(255,248,240,0.006));
+            border:1px solid rgba(255,248,240,0.02);
             color:var(--muted); font-size:14px; line-height:1.6;
         }
-        .quote-item strong{ color:#fff; display:block; margin-bottom:6px; font-weight:700; }
+        .quote-item strong{ color:var(--text); display:block; margin-bottom:6px; font-weight:700; }
 
         /* 播放器 */
-        .player{
-            display:flex; align-items:center; gap:12px;
-            margin-top:12px; width:100%; max-width:600px;
-        }
+        .player{ display:flex; align-items:center; gap:12px; margin-top:12px; width:100%; max-width:600px; }
         .play-btn{
             width:48px; height:48px; border-radius:12px;
             display:inline-grid; place-items:center; font-size:20px; cursor:pointer;
-            background: linear-gradient(135deg, rgba(138,180,255,0.15), rgba(243,168,255,0.1));
-            border:1px solid rgba(138,180,255,0.2); color:var(--text);
+            background: linear-gradient(135deg, rgba(255,176,136,0.15), rgba(255,126,95,0.1));
+            border:1px solid rgba(255,176,136,0.2);
+            color:var(--text); flex-shrink:0;
             transition: transform .2s, box-shadow .2s, background .2s;
-            box-shadow: 0 4px 12px rgba(2,6,23,0.3); flex-shrink:0;
+            box-shadow: 0 4px 12px rgba(20,10,0,0.3);
         }
         .play-btn:hover{
             transform:translateY(-4px) scale(1.05);
-            box-shadow: 0 8px 20px rgba(138,180,255,0.3);
-            background: linear-gradient(135deg, rgba(138,180,255,0.2), rgba(243,168,255,0.15));
+            box-shadow: 0 8px 20px rgba(255,176,136,0.3);
+            background: linear-gradient(135deg, rgba(255,176,136,0.2), rgba(255,126,95,0.15));
         }
         .play-btn:active{ transform:translateY(-2px) scale(1.02); }
-        .progress-container{
-            flex:1; display:flex; align-items:center; gap:10px; min-width:0;
-        }
-        .progress-bar{
-            flex:1; height:6px;
-            background:rgba(255,255,255,0.08);
-            border-radius:8px; overflow:hidden; position:relative; cursor:pointer;
-            min-width:120px;
-        }
+        .progress-wrap{ flex:1; display:flex; align-items:center; gap:10px; min-width:0; }
+        .progress-bar{ flex:1; height:6px; background:rgba(255,255,255,0.08); border-radius:8px; overflow:hidden; position:relative; cursor:pointer; min-width:120px; }
         .progress-fill{
-            height:100%;
-            background:linear-gradient(90deg, var(--accent), var(--accent-2));
-            border-radius:8px; width:0%;
-            transition:width 0.1s linear; position:relative;
+            height:100%; background:linear-gradient(90deg, var(--accent), var(--accent-2));
+            border-radius:8px; width:0%; transition:width 0.1s linear; position:relative;
         }
         .progress-fill::after{
-            content:'';
-            position:absolute; right:0; top:50%;
-            transform:translateY(-50%);
-            width:12px; height:12px;
-            background:var(--text); border-radius:50%;
-            box-shadow:0 0 8px rgba(138,180,255,0.6);
+            content:''; position:absolute; right:0; top:50%; transform:translateY(-50%);
+            width:12px; height:12px; background:var(--text); border-radius:50%;
+            box-shadow:0 0 8px rgba(255,176,136,0.6);
         }
         .time-display{
             font-size:13px; color:var(--muted); font-weight:600;
-            font-variant-numeric:tabular-nums;
-            min-width:100px; text-align:right; white-space:nowrap;
+            font-variant-numeric:tabular-nums; min-width:100px; text-align:right; white-space:nowrap;
         }
 
-        /* 光标 */
-        .cursor-circle{
-            position:fixed; pointer-events:none; z-index:99999;
-            width:36px; height:36px; border-radius:50%; transform:translate(-50%,-50%);
-            mix-blend-mode:screen;
-            background: radial-gradient(circle at 40% 30%, rgba(250,250,255,0.9), rgba(138,180,255,0.22) 30%, rgba(138,180,255,0.06) 60%, transparent 70%);
-            transition: width .14s, height .14s, opacity .18s;
-            opacity:0.95;
+        /* ======================================================
+           SECTION 2 — 昼 (Afternoon)  夏日海风
+           ====================================================== */
+        .afternoon{
+            background: linear-gradient(180deg, #5bb5e8 0%, #89d4f0 25%, #b5e6f7 50%, #d4f0f8 70%, #e8f5f8 100%);
+            color: #1a2a3a;
         }
-        .cursor-circle.big{ width:84px; height:84px; opacity:0.6; }
+        .afternoon * { --accent: #0288d1; --accent-2: #ff8a65; --muted: #3a5a6a; --text: #1a2a3a; --card-bg: rgba(255,255,255,0.25); --glass-border: rgba(255,255,255,0.3); }
+        .afternoon .btn{ color:#1a2a3a; }
+        .afternoon .btn.primary{ background: linear-gradient(90deg, rgba(2,136,209,0.12), rgba(255,138,101,0.08)); border-color:rgba(2,136,209,0.15); }
 
-        /* 滚动提示 */
-        .scroll-hint{
-            position:absolute;
-            bottom:24px;
-            left:50%;
-            transform:translateX(-50%);
-            z-index:10;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            gap:6px;
-            color:var(--muted);
-            font-size:12px;
-            opacity:0.6;
-            animation:bounce 2s infinite;
-            cursor:pointer;
+        /* 太阳 */
+        .noon-sun{
+            position:absolute; top:30px; right:40px; z-index:1; pointer-events:none;
         }
-        .scroll-hint .arrow{
-            width:20px; height:20px;
-            border-right:2px solid var(--muted);
-            border-bottom:2px solid var(--muted);
-            transform:rotate(45deg);
-            opacity:0.5;
+        .noon-sun .sun-body{
+            width:80px; height:80px; border-radius:50%;
+            background: radial-gradient(circle at 35% 35%, #fff7e0, #ffd54f, #ffb300);
+            box-shadow:0 0 40px rgba(255,213,79,0.4), 0 0 80px rgba(255,213,79,0.15), 0 0 120px rgba(255,213,79,0.05);
+            animation: sun-pulse 4s ease-in-out infinite alternate;
         }
-        @keyframes bounce{
-            0%,100%{ transform:translateX(-50%) translateY(0); }
-            50%{ transform:translateX(-50%) translateY(8px); }
-        }
-
-        /* ========== Section 2 — 星空流星 ========== */
-        .star-section{
-            background: linear-gradient(180deg, #050916 0%, #0a0e2a 30%, #0f1635 60%, #0a0e2a 100%);
-            position:relative;
-            overflow:hidden;
-            min-height:100vh;
-            padding:80px 20px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-        }
-        /* 银河雾状效果 */
-        .star-section::before{
-            content:'';
-            position:absolute;
-            inset:0;
-            background:
-                radial-gradient(ellipse at 20% 50%, rgba(138,180,255,0.04), transparent 50%),
-                radial-gradient(ellipse at 80% 30%, rgba(243,168,255,0.03), transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(100,120,255,0.03), transparent 50%);
-            pointer-events:none;
-            z-index:0;
-        }
-        /* 星空背景点 — JS生成，这里只定义容器 */
-        .starfield{
-            position:absolute;
-            inset:0;
-            z-index:0;
-            overflow:hidden;
-        }
-        .starfield .star{
-            position:absolute;
-            background:#fff;
+        @keyframes sun-pulse{ 0%{ box-shadow:0 0 40px rgba(255,213,79,0.4); } 100%{ box-shadow:0 0 60px rgba(255,213,79,0.6); } }
+        .sun-rays2{
+            position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+            width:200px; height:200px;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255,213,79,0.03) 8deg, transparent 16deg);
             border-radius:50%;
+            animation: sun-beam2 30s linear infinite;
+        }
+        @keyframes sun-beam2{ 0%{ transform:translate(-50%,-50%) rotate(0deg); } 100%{ transform:translate(-50%,-50%) rotate(360deg); } }
+
+        /* 浮云 */
+        .cloud{
+            position:absolute; z-index:1; pointer-events:none;
+            background: rgba(255,255,255,0.6); border-radius:50%;
+            filter: blur(14px);
+        }
+        .cloud-1{
+            width:180px; height:60px; top:8%; left:-10%;
+            animation: cloud-drift 35s linear infinite;
+        }
+        .cloud-2{
+            width:240px; height:70px; top:20%; left:-15%;
+            animation: cloud-drift 45s linear infinite;
+            animation-delay: -15s;
+        }
+        .cloud-3{
+            width:150px; height:50px; top:5%; left:-8%;
+            animation: cloud-drift 30s linear infinite;
+            animation-delay: -28s;
+        }
+        @keyframes cloud-drift{
+            0%{ transform:translateX(0); opacity:0; }
+            5%{ opacity:0.6; }
+            90%{ opacity:0.6; }
+            100%{ transform:translateX(calc(100vw + 200px)); opacity:0; }
+        }
+
+        /* 海波 */
+        .waves{
+            position:absolute; bottom:0; left:0; width:100%; height:120px; z-index:1; pointer-events:none;
+        }
+        .wave{
+            position:absolute; bottom:0; width:200%; height:100%;
+            background: rgba(255,255,255,0.12);
+            border-radius: 45% 55% 0 0;
+            animation: wave-move 8s ease-in-out infinite alternate;
+        }
+        .wave:nth-child(2){
+            background: rgba(255,255,255,0.08);
+            animation-duration: 10s; animation-delay: -4s;
+            border-radius: 55% 45% 0 0;
+        }
+        .wave:nth-child(3){
+            background: rgba(2,136,209,0.06);
+            animation-duration: 12s; animation-delay: -8s;
+            border-radius: 40% 60% 0 0;
+        }
+        @keyframes wave-move{
+            0%{ transform:translateX(0) translateY(0); }
+            100%{ transform:translateX(-25%) translateY(-8px); }
+        }
+
+        /* 风铃 */
+        .wind-chime{
+            position:absolute; top:40px; left:30px; z-index:2; pointer-events:none;
+            transform-origin:top center;
+            animation: chime-sway 4s ease-in-out infinite;
+        }
+        @keyframes chime-sway{
+            0%,100%{ transform:rotate(-4deg); }
+            50%{ transform:rotate(4deg); }
+        }
+        .chime-bar{
+            width:70px; height:3px;
+            background: linear-gradient(90deg, #8d6e63, #a1887f, #8d6e63);
+            border-radius:2px; margin:0 auto;
+        }
+        .chime-line{
+            width:1px; height:50px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            margin:0 auto; position:relative;
+        }
+        .chime-line .bell{
+            position:absolute; bottom:-8px; left:-4px;
+            width:9px; height:14px;
+            border-radius: 0 0 50% 50%;
+            background: linear-gradient(180deg, #ffd54f, #ff8a65);
+            box-shadow:0 0 6px rgba(255,213,79,0.3);
+            animation: bell-glimmer 2s ease-in-out infinite;
+        }
+        .chime-line:nth-child(3) .bell{ animation-delay:0.5s; }
+        .chime-line:nth-child(4) .bell{ animation-delay:1s; }
+        @keyframes bell-glimmer{
+            0%,100%{ opacity:0.7; }
+            50%{ opacity:1; box-shadow:0 0 10px rgba(255,213,79,0.5); }
+        }
+
+        /* 昼 — 内容 */
+        .afternoon .sec-inner{
+            position:relative; z-index:3; width:100%; max-width:var(--maxwidth); margin:0 auto;
+        }
+        .afternoon .sec-title{
+            text-align:center; margin-bottom:30px;
+        }
+        .afternoon .sec-title h2{
+            font-size:38px; font-weight:800; letter-spacing:2px;
+            background: linear-gradient(135deg, #0288d1, #4fc3f7, #ff8a65);
+            -webkit-background-clip:text; background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+        .afternoon .sec-title p{
+            color:var(--muted); font-size:15px; max-width:500px; margin:8px auto 0;
+        }
+        .summer-grid{
+            display:grid; grid-template-columns:1fr 1fr; gap:16px;
+        }
+        .summer-card{
+            padding:20px; border-radius:var(--radius);
+            background: var(--card-bg); backdrop-filter:blur(4px);
+            border:1px solid var(--glass-border);
+            transition: transform .3s, box-shadow .3s, background .3s;
+            cursor:default;
+        }
+        .summer-card:hover{
+            transform:translateY(-8px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.35);
+        }
+        .summer-card .ic{ font-size:26px; display:block; margin-bottom:8px; }
+        .summer-card h3{ font-size:16px; margin-bottom:6px; }
+        .summer-card p{ color:var(--muted); font-size:14px; line-height:1.6; }
+
+        /* ======================================================
+           SECTION 3 — 夜 (Night)  星空银河
+           ====================================================== */
+        .night{
+            background: linear-gradient(180deg, #020510 0%, #050a1e 25%, #0a1030 50%, #080c28 75%, #050a1e 100%);
+            color: #eaf2ff;
+        }
+        .night * { --accent: #8ab4ff; --accent-2: #f3a8ff; --muted: #aebdd6; --text: #eaf2ff; --glass-border: rgba(255,255,255,0.06); }
+
+        /* 月亮 */
+        .moon{
+            position:absolute; top:40px; right:50px; z-index:1; pointer-events:none;
+        }
+        .moon-body{
+            width:70px; height:70px; border-radius:50%;
+            background: radial-gradient(circle at 35% 35%, #fff, #f5e6b8, #e8dbb0);
+            box-shadow:0 0 30px rgba(255,255,200,0.25), 0 0 80px rgba(255,255,200,0.08);
+            animation: moon-glow 6s ease-in-out infinite alternate;
+        }
+        @keyframes moon-glow{ 0%{ box-shadow:0 0 30px rgba(255,255,200,0.2); } 100%{ box-shadow:0 0 50px rgba(255,255,200,0.35); } }
+        .moon-crater{
+            position:absolute; border-radius:50%; background:rgba(200,180,140,0.15);
+        }
+        .moon-crater:nth-child(2){ width:14px; height:14px; top:18px; left:20px; }
+        .moon-crater:nth-child(3){ width:8px; height:8px; top:40px; left:40px; }
+        .moon-crater:nth-child(4){ width:10px; height:10px; top:12px; left:45px; }
+
+        /* 银河 */
+        .milky-way{
+            position:absolute; z-index:0; pointer-events:none;
+            width:120%; height:250px; top:25%; left:-10%;
+            background:
+                radial-gradient(ellipse at 30% 50%, rgba(200,180,255,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(138,180,255,0.03) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 50%, rgba(243,168,255,0.02) 0%, transparent 40%);
+            transform:rotate(-15deg);
+            filter:blur(20px);
+        }
+
+        /* 星空 — JS 生成 */
+        .starfield{ position:absolute; inset:0; z-index:0; overflow:hidden; }
+        .starfield .star{
+            position:absolute; background:#fff; border-radius:50%;
             animation:twinkle var(--dur) ease-in-out infinite alternate;
         }
         @keyframes twinkle{
@@ -527,219 +572,126 @@
         }
         /* 流星 */
         .meteor{
-            position:absolute;
-            width:2px;
-            height:80px;
-            background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.8));
+            position:absolute; z-index:1; pointer-events:none;
+            width:2px; height:80px;
+            background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.85));
             transform:rotate(-35deg);
             animation:meteor-fly linear infinite;
-            z-index:1;
-            pointer-events:none;
         }
         .meteor::before{
-            content:'';
-            position:absolute;
-            top:0;
-            left:-1px;
-            width:4px;
-            height:4px;
-            border-radius:50%;
+            content:''; position:absolute; top:0; left:-1.5px;
+            width:5px; height:5px; border-radius:50%;
             background:rgba(255,255,255,0.95);
-            box-shadow:0 0 6px rgba(255,255,255,0.8), 0 0 12px rgba(138,180,255,0.4);
+            box-shadow:0 0 6px rgba(255,255,255,0.8), 0 0 16px rgba(138,180,255,0.4);
         }
         @keyframes meteor-fly{
-            0%{
-                transform:translate(0,0) rotate(-35deg);
-                opacity:1;
-            }
-            70%{
-                opacity:1;
-            }
-            100%{
-                transform:translate(-600px,600px) rotate(-35deg);
-                opacity:0;
-            }
+            0%{ transform:translate(0,0) rotate(-35deg); opacity:1; }
+            75%{ opacity:1; }
+            100%{ transform:translate(-700px,700px) rotate(-35deg); opacity:0; }
         }
-        /* 星轨 — 额外的氛围 */
-        .stardust{
-            position:absolute;
-            border-radius:50%;
-            background:radial-gradient(circle, rgba(138,180,255,0.06), transparent 70%);
-            pointer-events:none;
-            z-index:0;
+        .nebula{
+            position:absolute; border-radius:50%; pointer-events:none; z-index:0;
+            background:radial-gradient(circle, rgba(138,180,255,0.05), transparent 70%);
             animation:drift 60s linear infinite;
         }
         @keyframes drift{
             0%{ transform:translate(0,0); opacity:0.3; }
-            50%{ transform:translate(30px,-20px); opacity:0.6; }
+            50%{ transform:translate(20px,-15px); opacity:0.6; }
             100%{ transform:translate(0,0); opacity:0.3; }
         }
 
-        /* 星空内容 */
-        .star-content{
-            position:relative;
-            z-index:2;
-            width:100%;
-            max-width:var(--maxwidth);
-            margin:0 auto;
+        /* 夜 — 内容 */
+        .night .sec-inner{
+            position:relative; z-index:2; width:100%; max-width:var(--maxwidth); margin:0 auto;
         }
-        .star-header{
-            text-align:center;
-            margin-bottom:40px;
-        }
-        .star-header h2{
-            font-size:42px;
-            font-weight:800;
-            letter-spacing:2px;
+        .night .sec-title{ text-align:center; margin-bottom:36px; }
+        .night .sec-title h2{
+            font-size:40px; font-weight:800; letter-spacing:2px;
             background:linear-gradient(135deg, #f3a8ff, #8ab4ff, #a5d4ff);
-            -webkit-background-clip:text;
-            background-clip:text;
+            -webkit-background-clip:text; background-clip:text;
             -webkit-text-fill-color:transparent;
-            margin-bottom:12px;
         }
-        .star-header p{
-            color:var(--muted);
-            font-size:16px;
-            max-width:500px;
-            margin:0 auto;
-            line-height:1.8;
-            opacity:0.8;
+        .night .sec-title p{
+            color:var(--muted); font-size:15px; max-width:500px; margin:8px auto 0;
+            line-height:1.8; opacity:0.8;
         }
-        .star-header .sub-glow{
-            display:inline-block;
-            margin-top:8px;
-            padding:6px 20px;
-            border-radius:999px;
-            font-size:13px;
-            background:rgba(138,180,255,0.08);
-            border:1px solid rgba(138,180,255,0.12);
+        .night .sec-title .badge{
+            display:inline-block; margin-top:8px; padding:6px 20px; border-radius:999px;
+            font-size:13px; background:rgba(138,180,255,0.08); border:1px solid rgba(138,180,255,0.12);
             color:var(--accent);
-            -webkit-text-fill-color:var(--accent);
         }
 
-        .star-grid{
-            display:grid;
-            grid-template-columns: 1fr 1fr;
-            gap:18px;
-        }
-        .star-card{
-            padding:24px;
-            border-radius:var(--radius);
+        .night .star-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+        .night .star-card{
+            padding:24px; border-radius:var(--radius);
             background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
-            border:1px solid rgba(255,255,255,0.04);
-            backdrop-filter:blur(4px);
+            border:1px solid var(--glass-border); backdrop-filter:blur(4px);
             transition: transform .3s, box-shadow .3s, border-color .3s;
-            cursor:default;
-            position:relative;
-            overflow:hidden;
+            cursor:default; position:relative; overflow:hidden;
         }
-        .star-card:hover{
+        .night .star-card:hover{
             transform:translateY(-10px);
             box-shadow: 0 20px 60px rgba(2,6,23,0.5);
             border-color:rgba(138,180,255,0.15);
         }
-        .star-card::before{
-            content:'';
-            position:absolute;
-            top:0; left:0;
-            width:100%; height:2px;
+        .night .star-card::before{
+            content:''; position:absolute; top:0; left:0; width:100%; height:2px;
             background:linear-gradient(90deg, transparent, rgba(138,180,255,0.3), rgba(243,168,255,0.3), transparent);
-            transform:translateX(-100%);
-            transition:transform .6s;
+            transform:translateX(-100%); transition:transform .6s;
         }
-        .star-card:hover::before{
-            transform:translateX(100%);
-        }
-        .star-card .icon{
-            font-size:28px;
-            display:block;
-            margin-bottom:10px;
-        }
-        .star-card h3{
-            font-size:17px;
-            margin-bottom:8px;
-            font-weight:700;
-            background:linear-gradient(90deg, #fff, var(--accent));
-            -webkit-background-clip:text;
-            background-clip:text;
+        .night .star-card:hover::before{ transform:translateX(100%); }
+        .night .star-card .ic{ font-size:26px; display:block; margin-bottom:8px; }
+        .night .star-card h3{
+            font-size:16px; margin-bottom:6px;
+            background:linear-gradient(90deg, var(--text), var(--accent));
+            -webkit-background-clip:text; background-clip:text;
             -webkit-text-fill-color:transparent;
         }
-        .star-card p{
-            color:var(--muted);
-            font-size:14px;
-            line-height:1.7;
-        }
-        .star-card .footnote{
-            display:block;
-            margin-top:12px;
-            font-size:12px;
-            color:rgba(174,189,214,0.5);
-            font-style:italic;
+        .night .star-card p{ color:var(--muted); font-size:14px; line-height:1.7; }
+        .night .star-card .ft{
+            display:block; margin-top:10px; font-size:12px; color:rgba(174,189,214,0.4); font-style:italic;
         }
 
-        /* ========== Section 3 — 页脚 ========== */
-        .footer-section{
+        /* ======================================================
+           SECTION 4 — 页脚
+           ====================================================== */
+        .outro{
             min-height:30vh;
-            background: linear-gradient(180deg, #0a0e2a 0%, #050916 100%);
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            gap:16px;
-            padding:40px 20px;
-            text-align:center;
-            position:relative;
-            scroll-snap-align:end;
+            background: linear-gradient(180deg, #050a1e 0%, #020510 100%);
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            gap:16px; padding:40px 20px; text-align:center; position:relative;
+            scroll-snap-align:end; color:#eaf2ff;
         }
-        .footer-section::before{
-            content:'';
-            position:absolute;
-            top:0; left:10%;
-            width:80%; height:1px;
+        .outro::before{
+            content:''; position:absolute; top:0; left:10%; width:80%; height:1px;
             background:linear-gradient(90deg, transparent, rgba(138,180,255,0.2), transparent);
         }
-        .footer-section .big-quote{
-            font-size:18px;
-            max-width:500px;
-            color:var(--muted);
-            line-height:1.8;
-            font-style:italic;
-            opacity:0.7;
+        .outro .big-q{
+            font-size:18px; max-width:500px; color:var(--muted);
+            line-height:1.8; font-style:italic; opacity:0.7;
         }
-        .footer-section .links{
-            display:flex;
-            gap:20px;
+        .outro .links{ display:flex; gap:20px; }
+        .outro .links a{
+            color:var(--muted); text-decoration:none; font-size:13px;
+            border-bottom:1px dashed rgba(255,255,255,0.03); padding-bottom:2px; transition:color .2s;
         }
-        .footer-section .links a{
-            color:var(--muted);
-            text-decoration:none;
-            font-size:13px;
-            border-bottom:1px dashed rgba(255,255,255,0.03);
-            padding-bottom:2px;
-            transition:color .2s;
-        }
-        .footer-section .links a:hover{ color:var(--accent); }
-        .footer-section .copy{
-            color:rgba(174,189,214,0.35);
-            font-size:12px;
-        }
+        .outro .links a:hover{ color:#8ab4ff; }
+        .outro .copy{ color:rgba(174,189,214,0.35); font-size:12px; }
 
-        /* ========== 动画 ========== */
-        .fade-up{ opacity:0; transform:translateY(10px); animation: fadeUp .6s forwards; }
-        .delay-1{ animation-delay:0.06s; }
-        .delay-2{ animation-delay:0.14s; }
-        .delay-3{ animation-delay:0.3s; }
-        @keyframes fadeUp{ to{ opacity:1; transform:none; } }
-
-        /* ========== 响应式 ========== */
+        /* ======================================================
+           响应式
+           ====================================================== */
         @media (max-width:980px){
             .wrap{ grid-template-columns:1fr; padding:22px; gap:18px; }
-            .avatar{ width:104px; height:104px; border-radius:14px; flex:0 0 104px; }
-            .grid{ grid-template-columns:1fr; }
+            .avatar{ width:104px; height:104px; flex:0 0 104px; }
+            .grid, .summer-grid, .night .star-grid{ grid-template-columns:1fr; }
             .hero{ flex-direction:column; gap:14px; }
             .stats{ flex-wrap:wrap; }
-            .star-grid{ grid-template-columns:1fr; }
-            .star-header h2{ font-size:30px; }
+            .noon-sun .sun-body{ width:60px; height:60px; }
+            .moon-body{ width:55px; height:55px; }
+            .night .sec-title h2{ font-size:30px; }
+            .afternoon .sec-title h2{ font-size:30px; }
+            .wind-chime{ transform:scale(0.7); transform-origin:top left; }
         }
         @media (max-width:520px){
             .section{ padding:20px 12px; }
@@ -747,65 +699,64 @@
             .card{ padding:18px; }
             .main{ padding:18px; }
             .avatar-wrap{ flex-direction:column; align-items:flex-start; }
-            .avatar{ width:88px; height:88px; border-radius:12px; flex:0 0 88px; }
+            .avatar{ width:88px; height:88px; flex:0 0 88px; }
             .quote h1{ font-size:20px; }
             .quote p{ font-size:14px; }
             .play-btn{ width:44px; height:44px; font-size:18px; }
             .player{ flex-wrap:wrap; }
-            .progress-container{ width:100%; margin-top:8px; }
+            .progress-wrap{ width:100%; margin-top:8px; }
             .time-display{ min-width:80px; font-size:12px; }
-            .time-container{ padding:16px; margin:16px 0; }
-            .time-value{ font-size:20px; }
-            .magic-circle-container{ margin:20px 0; padding:16px; min-height:160px; }
+            .time-box{ padding:16px; margin:16px 0; }
+            .time-val{ font-size:20px; }
+            .magic-box{ margin:20px 0; padding:16px; min-height:160px; }
             .magic-circle{ width:100px; height:100px; }
-            .triangle-ring-inner{ inset:16px; }
-            .triangle-ring-inner .magic-triangle{
-                border-left-width:5px; border-right-width:5px;
-                border-bottom-width:8px; transform-origin:0 -28px;
-            }
+            .tri-ring-in{ inset:16px; }
+            .tri-ring-in .tri{ border-left-width:5px; border-right-width:5px; border-bottom-width:8px; transform-origin:0 -28px; }
             .actions{ flex-direction:column; }
             .btn{ width:100%; justify-content:center; }
-            .star-section{ padding:60px 14px; }
-            .star-header h2{ font-size:24px; }
-            .star-card{ padding:18px; }
-            .star-grid{ gap:14px; }
+            .afternoon{ padding:60px 14px; }
+            .afternoon .sec-title h2{ font-size:22px; }
+            .summer-card{ padding:16px; }
+            .summer-grid{ gap:12px; }
+            .night{ padding:60px 14px; }
+            .night .sec-title h2{ font-size:22px; }
+            .night .star-card{ padding:16px; }
+            .night .star-grid{ gap:12px; }
             .scroll-hint{ bottom:14px; }
-            .footer-section{ min-height:20vh; padding:30px 16px; }
-            .footer-section .big-quote{ font-size:15px; }
+            .outro{ min-height:20vh; padding:30px 16px; }
+            .outro .big-q{ font-size:15px; }
+            .wind-chime{ display:none; }
+            .noon-sun .sun-body{ width:50px; height:50px; }
+            .sun-rays2{ width:140px; height:140px; }
+            .moon-body{ width:45px; height:45px; }
         }
     </style>
 </head>
 <body>
 
-<!-- ===== 樱花雨 (固定，覆盖全局) ===== -->
-<div class="sakura-container" aria-hidden="true">
-    <div class="sakura sakura-left"></div>
-    <div class="sakura sakura-left"></div>
-    <div class="sakura sakura-left"></div>
-    <div class="sakura sakura-left"></div>
-    <div class="sakura sakura-left"></div>
-    <div class="sakura sakura-left"></div>
-    <div class="sakura sakura-left"></div>
-    <div class="sakura sakura-left"></div>
-    <div class="sakura sakura-right"></div>
-    <div class="sakura sakura-right"></div>
-    <div class="sakura sakura-right"></div>
-    <div class="sakura sakura-right"></div>
-    <div class="sakura sakura-right"></div>
-    <div class="sakura sakura-right"></div>
-    <div class="sakura sakura-right"></div>
-    <div class="sakura sakura-right"></div>
-</div>
+<!-- ============================================================
+     SECTION 1 — 朝 (Morning)
+     ============================================================ -->
+<section class="section morning" id="morning">
+    <!-- 晨曦光晕 -->
+    <div class="sun-rays" aria-hidden="true"></div>
+    <!-- 樱花雨 -->
+    <div class="sakura-area" aria-hidden="true">
+        <div class="sakura sakura-l"></div><div class="sakura sakura-l"></div>
+        <div class="sakura sakura-l"></div><div class="sakura sakura-l"></div>
+        <div class="sakura sakura-l"></div><div class="sakura sakura-l"></div>
+        <div class="sakura sakura-l"></div><div class="sakura sakura-l"></div>
+        <div class="sakura sakura-r"></div><div class="sakura sakura-r"></div>
+        <div class="sakura sakura-r"></div><div class="sakura sakura-r"></div>
+        <div class="sakura sakura-r"></div><div class="sakura sakura-r"></div>
+        <div class="sakura sakura-r"></div><div class="sakura sakura-r"></div>
+    </div>
 
-<!-- ===== Section 1 — 首屏 ===== -->
-<section class="section hero-section" id="home">
-    <div class="bg-slot" aria-hidden="true"></div>
-
-    <div class="wrap" role="main">
-        <!-- 左侧卡片 -->
-        <aside class="card fade-up delay-1" aria-label="个人信息">
+    <div class="wrap">
+        <!-- 左栏 -->
+        <aside class="card fade-up delay-1">
             <div class="avatar-wrap">
-                <div class="avatar" id="avatar" title="">
+                <div class="avatar" id="avatar">
                     <img src="./assets/avatar.jpg" alt="li">
                 </div>
                 <div class="intro">
@@ -818,224 +769,263 @@
                         <span class="tag">风景</span>
                         <span class="tag">深度问题</span>
                     </div>
-                    <div class="actions" style="margin-top:12px;">
-                        <a class="btn primary" id="quickPlay" href="#" title="点击播放/暂停背景音乐">▶ 听轻音乐</a>
-                        <a class="btn" href="#star-journey" title="前往星空旅程">✦ 星空旅程</a>
+                    <div class="actions">
+                        <a class="btn primary" id="quickPlay" href="#">▶ 听轻音乐</a>
+                        <a class="btn" href="#afternoon">☀ 夏日午后</a>
                     </div>
                 </div>
             </div>
-
-            <div class="meta">简短自我介绍：我在数字与想象之间游走，喜欢用文字与图像记录那些温柔与深刻的时刻。</div>
+            <div class="meta" style="color:var(--muted);font-size:14px;line-height:1.5;">
+                我在数字与想象之间游走，喜欢用文字与图像记录那些温柔与深刻的时刻。
+            </div>
 
             <!-- 时间 -->
-            <div class="time-container">
-                <div class="time-display-main">
-                    <div class="time-label">✨ 当前时间</div>
-                    <div class="time-value" id="currentTime">00:00:00</div>
-                    <div class="date-value" id="currentDate">2024-01-01</div>
+            <div class="time-box">
+                <div class="time-inner">
+                    <div class="time-lbl" id="timeLbl">☀ 早安</div>
+                    <div class="time-val" id="currentTime">00:00:00</div>
+                    <div class="date-val" id="currentDate">2024-01-01</div>
+                    <div class="greeting" id="greetingText">愿你拥有美好的一天</div>
                 </div>
             </div>
 
-            <!-- 魔法阵 -->
-            <div class="magic-circle-container">
+            <!-- 魔法阵 (金色) -->
+            <div class="magic-box">
                 <div class="magic-circle">
-                    <div class="magic-center"></div>
-                    <div class="triangle-ring-outer">
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
+                    <div class="magic-dot"></div>
+                    <div class="tri-ring">
+                        <div class="tri"></div><div class="tri"></div><div class="tri"></div><div class="tri"></div>
+                        <div class="tri"></div><div class="tri"></div><div class="tri"></div><div class="tri"></div>
                     </div>
-                    <div class="triangle-ring-inner">
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
-                        <div class="magic-triangle"></div>
+                    <div class="tri-ring-in">
+                        <div class="tri"></div><div class="tri"></div><div class="tri"></div><div class="tri"></div>
+                        <div class="tri"></div><div class="tri"></div>
                     </div>
                 </div>
-                <div class="magic-text">✦ 愿你拥有美好的一天 ✦</div>
+                <div class="magic-txt">✦ 每一个清晨都是新的开始 ✦</div>
             </div>
 
-            <div class="footer">
-                <div class="links">
-                    <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a> ·
-                    <a href="#" onclick="return false;">邮箱</a> ·
-                    <a href="#" onclick="return false;">联系</a>
-                </div>
+            <div class="card-foot">
+                <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a> ·
+                <a href="#" onclick="return false;">邮箱</a> ·
+                <a href="#" onclick="return false;">联系</a>
             </div>
         </aside>
 
-        <!-- 右侧主内容 -->
-        <section class="main fade-up delay-2" aria-label="主页内容">
+        <!-- 右栏 -->
+        <section class="main fade-up delay-2">
             <div class="hero">
                 <div class="quote">
-                    <h1>欢迎来到我的小宇宙</h1>
+                    <h1 id="mainGreeting">欢迎来到我的小宇宙</h1>
                     <p>轻音乐作为背景，二次元是灵感，galgame记录着故事，风景提醒我世界的辽阔。这里放着我在意的东西与我正在思考的问题。</p>
-
-                    <!-- 播放器 -->
-                    <div class="player" aria-label="背景音播放器">
-                        <button class="play-btn" id="playBtn" title="播放/暂停">▶</button>
-                        <div class="progress-container">
+                    <div class="player">
+                        <button class="play-btn" id="playBtn">▶</button>
+                        <div class="progress-wrap">
                             <div class="progress-bar" id="progressBar">
                                 <div class="progress-fill" id="progressFill"></div>
                             </div>
                             <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
                         </div>
                     </div>
-
                     <audio id="bgAudio" preload="none" loop>
                         <source src="./media/music.mp3" type="audio/mpeg">
                         <source src="./media/music.ogg" type="audio/ogg">
-                        当前浏览器不支持 audio 标签。
                     </audio>
                 </div>
-
                 <div class="stats" aria-hidden="true">
                     <div class="stat">📚 主题：二次元 · 音乐 · 风景</div>
                     <div class="stat">🎮 Galgame：剧情驱动</div>
                 </div>
             </div>
 
-            <!-- 两列内容 -->
             <div class="grid">
-                <article class="panel" id="music" title="喜欢的轻音乐">
+                <article class="panel" title="喜欢的轻音乐">
                     <h3>🎵 喜欢的轻音乐</h3>
-                    <p class="muted" style="margin-top:6px;">这些曲子是常常在我耳边响起、适合安静聆听的旋律</p>
+                    <p style="margin-top:6px;color:var(--muted);font-size:14px;line-height:1.5;">适合安静聆听的旋律</p>
                     <ul class="list" aria-label="轻音乐列表">
                         <li>遠い空へ</li>
                         <li>冬のサクラ</li>
                         <li>時代を越える想い</li>
                     </ul>
                 </article>
-
-                <article class="panel" id="galgame" title="喜爱的 Galgame">
+                <article class="panel" title="喜爱的 Galgame">
                     <h3>🎮 喜爱的 Galgame</h3>
-                    <p class="muted" style="margin-top:6px;">叙事与选择让我心动的作品</p>
+                    <p style="margin-top:6px;color:var(--muted);font-size:14px;line-height:1.5;">叙事与选择让我心动的作品</p>
                     <ul class="list" aria-label="Galgame 列表">
                         <li>千恋＊万花</li>
                         <li>紙の上の魔法使い</li>
                         <li>魔女的夜宴</li>
                     </ul>
                 </article>
-
-                <article class="panel" id="scenery" title="风景与向往">
+                <article class="panel" title="风景与向往">
                     <h3>🌄 对景色的向往</h3>
-                    <p class="muted" style="margin-top:6px;">我喜欢四季中不同的风景，它们像情绪一样陪伴我</p>
+                    <p style="margin-top:6px;color:var(--muted);font-size:14px;line-height:1.5;">四季不同的风景陪伴着我</p>
                     <ul class="list" aria-label="景色列表">
                         <li>春天的樱花</li>
                         <li>夏天的海</li>
                         <li>秋天的枫叶</li>
                         <li>冬天的温暖</li>
                     </ul>
-                    <p style="margin-top:8px; color:var(--muted); font-size:14px;">对美好景色的向往，最喜欢了。</p>
                 </article>
-
-                <article class="panel" id="quotes" title="语录与思考">
+                <article class="panel" title="语录与思考">
                     <h3>📝 片段语录</h3>
                     <div class="quotes" style="margin-top:8px;">
-                        <div class="quote-item">
-                            <strong>关于成长</strong>
-                            在你降临世上的那一天；太阳接受了行星的问候，你随即永恒地遵循着，让你出世的法则茁壮成长，你就是你，你无法逃脱你自己。
-                        </div>
-                        <div class="quote-item">
-                            <strong>关于幸福</strong>
-                            无论身在何处，我们只能在我们自身寻找或者获得幸福。
-                        </div>
-                        <div class="quote-item">
-                            <strong>关于本心</strong>
-                            若识心性非形象，湛然不动自真如。
-                        </div>
+                        <div class="quote-item"><strong>关于成长</strong> 你就是你，你无法逃脱你自己，时间与力量都不能打碎那既成的、已成活的形体。</div>
+                        <div class="quote-item"><strong>关于幸福</strong> 无论身在何处，我们只能在我们自身寻找或者获得幸福。</div>
+                        <div class="quote-item"><strong>关于本心</strong> 若识心性非形象，湛然不动自真如。</div>
                     </div>
                 </article>
             </div>
 
-            <div style="display:flex; gap:12px; margin-top:8px; align-items:center; flex-wrap:wrap;">
-                <a class="btn primary" href="#star-journey">✦ 前往星空旅程</a>
+            <div style="display:flex;gap:12px;margin-top:8px;align-items:center;flex-wrap:wrap;">
+                <a class="btn primary" href="#afternoon">☀ 前往夏日午后</a>
+                <a class="btn" href="#night">✦ 星空之夜</a>
             </div>
         </section>
     </div>
 
-    <!-- 滚动提示 -->
-    <div class="scroll-hint" onclick="document.getElementById('star-journey').scrollIntoView({behavior:'smooth'})">
-        <span>向下滚动</span>
-        <div class="arrow"></div>
+    <div class="scroll-hint" onclick="document.getElementById('afternoon').scrollIntoView({behavior:'smooth'})">
+        <span style="color:var(--muted)">向下滚动 — 夏日午后</span>
+        <div class="arrow" style="border-color:var(--muted)"></div>
     </div>
 </section>
 
-<!-- ===== Section 2 — 星空旅程 ===== -->
-<section class="section star-section" id="star-journey">
-    <!-- 星空容器 — JS 动态生成星星 -->
-    <div class="starfield" id="starfield"></div>
-
-    <!-- 流星 — CSS 动画 -->
-    <div class="meteor" style="top:8%; right:10%; animation-duration:4.2s; animation-delay:0s; opacity:0;"></div>
-    <div class="meteor" style="top:15%; right:25%; animation-duration:5.5s; animation-delay:3s; opacity:0; height:60px;"></div>
-    <div class="meteor" style="top:5%; right:40%; animation-duration:3.8s; animation-delay:7s; opacity:0; height:70px;"></div>
-    <div class="meteor" style="top:25%; right:15%; animation-duration:6s; animation-delay:12s; opacity:0; height:90px;"></div>
-    <div class="meteor" style="top:10%; right:55%; animation-duration:4.8s; animation-delay:18s; opacity:0; height:55px;"></div>
-    <div class="meteor" style="top:20%; right:5%; animation-duration:5s; animation-delay:25s; opacity:0; height:75px;"></div>
-    <div class="meteor" style="top:2%; right:30%; animation-duration:4.5s; animation-delay:33s; opacity:0; height:65px;"></div>
-
-    <!-- 星云光晕 -->
-    <div class="stardust" style="width:400px;height:400px;top:10%;left:-5%;"></div>
-    <div class="stardust" style="width:300px;height:300px;bottom:15%;right:5%;animation-duration:80s;"></div>
+<!-- ============================================================
+     SECTION 2 — 昼 (Afternoon)
+     ============================================================ -->
+<section class="section afternoon" id="afternoon">
+    <!-- 太阳 -->
+    <div class="noon-sun" aria-hidden="true">
+        <div class="sun-body"><div class="sun-rays2"></div></div>
+    </div>
+    <!-- 浮云 -->
+    <div class="cloud cloud-1" aria-hidden="true"></div>
+    <div class="cloud cloud-2" aria-hidden="true"></div>
+    <div class="cloud cloud-3" aria-hidden="true"></div>
+    <!-- 海波 -->
+    <div class="waves" aria-hidden="true">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    <!-- 风铃 -->
+    <div class="wind-chime" aria-hidden="true">
+        <div class="chime-bar"></div>
+        <div class="chime-line"><div class="bell"></div></div>
+        <div class="chime-line"><div class="bell"></div></div>
+        <div class="chime-line"><div class="bell"></div></div>
+    </div>
 
     <!-- 内容 -->
-    <div class="star-content fade-up">
-        <div class="star-header">
-            <h2>✦ 星空下的旅程 ✦</h2>
-            <p>每一颗流星都是宇宙写给我们的情书，每一段故事都是时间留下的印记。</p>
-            <span class="sub-glow">☾ 二次元 · 音乐 · 星空 · 思考</span>
+    <div class="sec-inner fade-up">
+        <div class="sec-title">
+            <h2>☀ 夏日的风物诗</h2>
+            <p>蝉鸣、海风、西瓜、风铃——夏天是记忆中最鲜明的季节。</p>
         </div>
+        <div class="summer-grid">
+            <div class="summer-card">
+                <span class="ic">🌊</span>
+                <h3>海边的记忆</h3>
+                <p>夏天的海总是蓝得耀眼，浪花拍打着沙滩，带走所有烦忧。每一个夏天都值得被记住。</p>
+            </div>
+            <div class="summer-card">
+                <span class="ic">🍉</span>
+                <h3>西瓜与团扇</h3>
+                <p>冰镇西瓜、轻轻摇动的团扇、午后透过树叶洒下的光斑，这些是夏天最温柔的馈赠。</p>
+            </div>
+            <div class="summer-card">
+                <span class="ic">🎐</span>
+                <h3>风铃与蝉鸣</h3>
+                <p>玻璃风铃在午后发出清脆声响，与远处的蝉鸣交织成夏日的交响曲。闭上眼，就能感受到那个季节。</p>
+            </div>
+            <div class="summer-card">
+                <span class="ic">🌅</span>
+                <h3>黄昏的夏日</h3>
+                <p>夕阳将天空染成橘红色，海面波光粼粼。夏天的黄昏总是漫长而温柔，仿佛时间也为美景停留。</p>
+            </div>
+        </div>
+    </div>
 
+    <div class="scroll-hint" onclick="document.getElementById('night').scrollIntoView({behavior:'smooth'})">
+        <span style="color:var(--muted)">向下滚动 — 星空之夜</span>
+        <div class="arrow" style="border-color:var(--muted)"></div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — 夜 (Night)
+     ============================================================ -->
+<section class="section night" id="night">
+    <!-- 月亮 -->
+    <div class="moon" aria-hidden="true">
+        <div class="moon-body">
+            <div class="moon-crater"></div>
+            <div class="moon-crater"></div>
+            <div class="moon-crater"></div>
+        </div>
+    </div>
+    <!-- 银河 -->
+    <div class="milky-way" aria-hidden="true"></div>
+    <!-- 星空容器 — JS 生成 -->
+    <div class="starfield" id="starfield"></div>
+    <!-- 流星 -->
+    <div class="meteor" style="top:8%;right:15%;animation-duration:4.5s;animation-delay:0s;"></div>
+    <div class="meteor" style="top:16%;right:30%;animation-duration:5.8s;animation-delay:4s;height:65px;"></div>
+    <div class="meteor" style="top:5%;right:45%;animation-duration:4s;animation-delay:9s;height:70px;"></div>
+    <div class="meteor" style="top:25%;right:10%;animation-duration:6.2s;animation-delay:15s;height:90px;"></div>
+    <div class="meteor" style="top:12%;right:55%;animation-duration:5s;animation-delay:22s;height:55px;"></div>
+    <div class="meteor" style="top:20%;right:5%;animation-duration:5.2s;animation-delay:30s;height:75px;"></div>
+    <div class="meteor" style="top:3%;right:35%;animation-duration:4.8s;animation-delay:38s;height:65px;"></div>
+    <!-- 星云 -->
+    <div class="nebula" style="width:400px;height:400px;top:10%;left:-5%;"></div>
+    <div class="nebula" style="width:300px;height:300px;bottom:15%;right:5%;animation-duration:80s;"></div>
+
+    <!-- 内容 -->
+    <div class="sec-inner fade-up">
+        <div class="sec-title">
+            <h2>✦ 星空下的夜晚 ✦</h2>
+            <p>每一颗流星都是宇宙写给我们的情书，每一段故事都是时间留下的印记。</p>
+            <span class="badge">☾ 二次元 · 音乐 · 星空 · 思考</span>
+        </div>
         <div class="star-grid">
             <div class="star-card">
-                <span class="icon">🌠</span>
+                <span class="ic">🌠</span>
                 <h3>二次元之旅</h3>
                 <p>从最初接触动漫到现在，每一部作品都像一颗星星，在记忆的夜空中闪烁。那些热血、感动与泪水，构成了我心中不灭的星空。</p>
-                <span class="footnote">—— 每颗星都是一个世界</span>
+                <span class="ft">—— 每颗星都是一个世界</span>
             </div>
-
             <div class="star-card">
-                <span class="icon">✨</span>
+                <span class="ic">✨</span>
                 <h3>Galgame 记忆</h3>
                 <p>那些让我心动的故事，每一个选择都像是流星，划过后留下永恒的痕迹。在文字与画面的交织中，我找到了无数个可能的自己。</p>
-                <span class="footnote">—— 选择即是命运</span>
+                <span class="ft">—— 选择即是命运</span>
             </div>
-
             <div class="star-card">
-                <span class="icon">🎵</span>
+                <span class="ic">🎵</span>
                 <h3>星空下的旋律</h3>
-                <p>轻音乐与星空是绝配。闭上眼，让旋律带你去往另一个世界——那里有风吹过草原的声音，有雨滴落在窗台的节奏，有星辰旋转的静谧。</p>
-                <span class="footnote">—— 音乐是宇宙的语言</span>
+                <p>轻音乐与星空是绝配。闭上眼，让旋律带你去往另一个世界——那里有风吹过草原的声音，有星辰旋转的静谧。</p>
+                <span class="ft">—— 音乐是宇宙的语言</span>
             </div>
-
             <div class="star-card">
-                <span class="icon">🌌</span>
+                <span class="ic">🌌</span>
                 <h3>未尽的思考</h3>
                 <p>在浩瀚的星空下，思考那些没有答案的问题，本身就是一种浪漫。关于存在、关于选择、关于美——这些问题像星光一样，指引我前行。</p>
-                <span class="footnote">—— 问题比答案更珍贵</span>
+                <span class="ft">—— 问题比答案更珍贵</span>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ===== Section 3 — 页脚 ===== -->
-<section class="footer-section" id="footer">
-    <div class="big-quote">
-        "世界不止眼前的苟且，还有二次元的浪漫与风景的辽阔。"
-    </div>
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<section class="outro" id="footer">
+    <div class="big-q">"世界不止眼前的苟且，还有二次元的浪漫与风景的辽阔。"</div>
     <div class="links">
         <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a href="#" onclick="return false;">邮箱</a>
         <a href="#" onclick="return false;">联系</a>
-        <a href="#home">返回顶部</a>
+        <a href="#morning">返回顶部</a>
     </div>
     <div class="copy">© li · 记录我喜欢的世界</div>
 </section>
@@ -1045,60 +1035,57 @@
 
 <script>
     // ========== 星空生成 ==========
-    (function generateStars(){
-        const container = document.getElementById('starfield');
-        if (!container) return;
-        const count = 150;
-        for (let i = 0; i < count; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            const size = Math.random() * 2.5 + 0.5;
-            star.style.width = size + 'px';
-            star.style.height = size + 'px';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            const twinkleDur = (Math.random() * 3 + 2) + 's';
-            star.style.setProperty('--dur', twinkleDur);
-            star.style.setProperty('--o1', (Math.random() * 0.3 + 0.1));
-            star.style.setProperty('--o2', (Math.random() * 0.5 + 0.5));
-            star.style.animationDelay = (Math.random() * 5) + 's';
-            container.appendChild(star);
+    (function(){
+        const c = document.getElementById('starfield');
+        if (!c) return;
+        for (let i = 0; i < 150; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            const sz = Math.random() * 2.5 + 0.5;
+            s.style.width = sz + 'px';
+            s.style.height = sz + 'px';
+            s.style.left = Math.random() * 100 + '%';
+            s.style.top = Math.random() * 100 + '%';
+            s.style.setProperty('--dur', (Math.random() * 3 + 2) + 's');
+            s.style.setProperty('--o1', (Math.random() * 0.3 + 0.1));
+            s.style.setProperty('--o2', (Math.random() * 0.5 + 0.5));
+            s.style.animationDelay = (Math.random() * 5) + 's';
+            c.appendChild(s);
         }
-        // 加一些亮星
         for (let i = 0; i < 20; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            const size = Math.random() * 3 + 2;
-            star.style.width = size + 'px';
-            star.style.height = size + 'px';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.setProperty('--dur', (Math.random() * 4 + 3) + 's');
-            star.style.setProperty('--o1', '0.6');
-            star.style.setProperty('--o2', '1');
-            star.style.animationDelay = (Math.random() * 6) + 's';
-            star.style.boxShadow = '0 0 4px rgba(255,255,255,0.6)';
-            container.appendChild(star);
+            const s = document.createElement('div');
+            s.className = 'star';
+            const sz = Math.random() * 3 + 2;
+            s.style.width = sz + 'px';
+            s.style.height = sz + 'px';
+            s.style.left = Math.random() * 100 + '%';
+            s.style.top = Math.random() * 100 + '%';
+            s.style.setProperty('--dur', (Math.random() * 4 + 3) + 's');
+            s.style.setProperty('--o1', '0.6');
+            s.style.setProperty('--o2', '1');
+            s.style.animationDelay = (Math.random() * 6) + 's';
+            s.style.boxShadow = '0 0 4px rgba(255,255,255,0.6)';
+            c.appendChild(s);
         }
     })();
 
-    // ========== 光标跟随 ==========
+    // ========== 光标 ==========
     const cursor = document.getElementById('cursor');
     document.addEventListener('mousemove', e => {
         cursor.style.left = e.clientX + 'px';
         cursor.style.top = e.clientY + 'px';
     });
-    document.querySelectorAll('a, .avatar, .panel, .btn, .play-btn, .star-card, .scroll-hint').forEach(el=>{
+    document.querySelectorAll('a, .avatar, .btn, .play-btn, .panel, .summer-card, .star-card, .scroll-hint, .tag').forEach(el=>{
         el.addEventListener('mouseenter', ()=> cursor.classList.add('big'));
         el.addEventListener('mouseleave', ()=> cursor.classList.remove('big'));
     });
 
-    // ========== 头像跟随 ==========
+    // ========== 头像 ==========
     const avatar = document.getElementById('avatar');
-    avatar.addEventListener('mousemove', (e)=>{
-        const rect = avatar.getBoundingClientRect();
-        const dx = (e.clientX - rect.left) / rect.width - 0.5;
-        const dy = (e.clientY - rect.top) / rect.height - 0.5;
+    avatar.addEventListener('mousemove', e => {
+        const r = avatar.getBoundingClientRect();
+        const dx = (e.clientX - r.left) / r.width - 0.5;
+        const dy = (e.clientY - r.top) / r.height - 0.5;
         avatar.style.transform = `translateY(-6px) rotate(${dx*6}deg) scale(1.03)`;
     });
     avatar.addEventListener('mouseleave', ()=> { avatar.style.transform = ''; });
@@ -1115,93 +1102,66 @@
     audio.preload = 'auto';
     audio.loop = true;
 
-    function formatTime(sec) {
-        if (isNaN(sec) || !isFinite(sec)) return '0:00';
-        const m = Math.floor(sec / 60);
-        const s = Math.floor(sec % 60);
-        return `${m}:${s.toString().padStart(2, '0')}`;
-    }
-    function updateProgress() {
+    function fmt(s) { if(isNaN(s)||!isFinite(s)) return '0:00'; return Math.floor(s/60)+':'+(Math.floor(s%60)).toString().padStart(2,'0'); }
+    function updProg() {
         if (audio.duration) {
-            const pct = (audio.currentTime / audio.duration) * 100;
-            progressFill.style.width = pct + '%';
-            timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
-        } else {
-            progressFill.style.width = '0%';
-            timeDisplay.textContent = `${formatTime(audio.currentTime)} / --:--`;
-        }
+            progressFill.style.width = (audio.currentTime/audio.duration)*100 + '%';
+            timeDisplay.textContent = fmt(audio.currentTime)+' / '+fmt(audio.duration);
+        } else { progressFill.style.width='0%'; timeDisplay.textContent = fmt(audio.currentTime)+' / --:--'; }
     }
-    audio.addEventListener('timeupdate', updateProgress);
-    audio.addEventListener('loadedmetadata', updateProgress);
-
-    progressBar.addEventListener('click', (e) => {
-        const rect = progressBar.getBoundingClientRect();
-        const pct = (e.clientX - rect.left) / rect.width;
-        if (audio.duration) audio.currentTime = pct * audio.duration;
+    audio.addEventListener('timeupdate', updProg);
+    audio.addEventListener('loadedmetadata', updProg);
+    progressBar.addEventListener('click', e => {
+        const r = progressBar.getBoundingClientRect();
+        const p = (e.clientX - r.left) / r.width;
+        if (audio.duration) audio.currentTime = p * audio.duration;
     });
-
-    playBtn.addEventListener('click', async (e) => {
+    playBtn.addEventListener('click', async e => {
         e.preventDefault();
-        if (audio.paused){
-            try {
-                await audio.play();
-                playBtn.textContent = '⏸';
-                if (quickPlay) quickPlay.textContent = '⏸ 暂停';
-            } catch (err) { console.warn('播放被阻止', err); }
-        } else {
-            audio.pause();
-            playBtn.textContent = '▶';
-            if (quickPlay) quickPlay.textContent = '▶ 听轻音乐';
-        }
+        if (audio.paused) { try { await audio.play(); playBtn.textContent='⏸'; if(quickPlay) quickPlay.textContent='⏸ 暂停'; } catch(err){} }
+        else { audio.pause(); playBtn.textContent='▶'; if(quickPlay) quickPlay.textContent='▶ 听轻音乐'; }
     });
-    if (quickPlay) {
-        quickPlay.addEventListener('click', async (e) => { e.preventDefault(); playBtn.click(); });
-    }
+    if (quickPlay) quickPlay.addEventListener('click', e => { e.preventDefault(); playBtn.click(); });
 
     // ========== 自动播放 ==========
-    let autoPlayAttempted = false;
-    const attemptAutoPlay = async () => {
-        if (autoPlayAttempted) return;
-        autoPlayAttempted = true;
-        try {
-            audio.preload = 'auto';
-            await audio.play();
-            playBtn.textContent = '⏸';
-            if (quickPlay) quickPlay.textContent = '⏸ 暂停';
-        } catch (err) { console.log('自动播放失败，等待用户交互'); }
-    };
-    ['click', 'keydown', 'touchstart'].forEach(eventType => {
-        document.addEventListener(eventType, () => {
-            if (!autoPlayAttempted) attemptAutoPlay();
-        }, { once: true });
-    });
+    let autoPlayed = false;
+    const tryPlay = async () => { if(autoPlayed) return; autoPlayed=true; try { audio.preload='auto'; await audio.play(); playBtn.textContent='⏸'; if(quickPlay) quickPlay.textContent='⏸ 暂停'; } catch(e){} };
+    ['click','keydown','touchstart'].forEach(ev => document.addEventListener(ev, ()=>{ if(!autoPlayed) tryPlay(); }, {once:true}));
 
-    // ========== 时钟 ==========
+    // ========== 时间 + 问候语 ==========
     function updateTime() {
         const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const seconds = now.getSeconds().toString().padStart(2, '0');
-        const timeStr = `${hours}:${minutes}:${seconds}`;
-        const year = now.getFullYear();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0');
-        const day = now.getDate().toString().padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
-        const timeEl = document.getElementById('currentTime');
-        const dateEl = document.getElementById('currentDate');
-        if (timeEl) timeEl.textContent = timeStr;
-        if (dateEl) dateEl.textContent = dateStr;
+        const h = now.getHours();
+        const timeStr = [h,now.getMinutes(),now.getSeconds()].map(v=>v.toString().padStart(2,'0')).join(':');
+        const dateStr = [now.getFullYear(),now.getMonth()+1,now.getDate()].map(v=>v.toString().padStart(2,'0')).join('-');
+
+        document.getElementById('currentTime').textContent = timeStr;
+        document.getElementById('currentDate').textContent = dateStr;
+
+        // 根据时段切换问候语
+        let greeting, timeLbl, mainG;
+        if (h < 6) { greeting = '夜深了，该休息了 🌙'; timeLbl = '🌙 夜深'; mainG = '夜深了，星辰伴你入梦'; }
+        else if (h < 9) { greeting = '早安，新的一天开始了 ☀'; timeLbl = '☀ 早安'; mainG = '早安，愿你拥有美好的一天'; }
+        else if (h < 12) { greeting = '上午好，愿你充满活力 🌤'; timeLbl = '🌤 上午'; mainG = '欢迎来到我的小宇宙'; }
+        else if (h < 14) { greeting = '午好，记得吃午餐 🍚'; timeLbl = '☀ 正午'; mainG = '午后的阳光正好'; }
+        else if (h < 18) { greeting = '下午好，来听听音乐吧 🎵'; timeLbl = '🌅 午后'; mainG = '下午的时光悠闲而美好'; }
+        else if (h < 21) { greeting = '傍晚好，夕阳真美 🌇'; timeLbl = '🌇 黄昏'; mainG = '傍晚的晚霞温柔而绚烂'; }
+        else { greeting = '晚上好，愿星空伴你入梦 ✨'; timeLbl = '🌙 晚上'; mainG = '夜晚的星空璀璨而深邃'; }
+
+        const gEl = document.getElementById('greetingText');
+        const lEl = document.getElementById('timeLbl');
+        const mEl = document.getElementById('mainGreeting');
+        if (gEl) gEl.textContent = greeting;
+        if (lEl) lEl.textContent = timeLbl;
+        if (mEl) mEl.textContent = mainG;
     }
     updateTime();
     setInterval(updateTime, 1000);
 
-    // ========== 键盘快捷键 ==========
-    document.addEventListener('keydown', (e) => {
-        if (e.key.toLowerCase() === 'm') playBtn.click();
-    });
+    // ========== 键盘 M ==========
+    document.addEventListener('keydown', e => { if(e.key.toLowerCase()==='m') playBtn.click(); });
 
-    // ========== 控制台提示 ==========
-    console.log("提示：将头像替换为 ./assets/avatar.jpg，将背景图片放到 ./assets/bg.jpg，将音频放到 ./media/music.mp3 或 .ogg。");
+    console.log("提示：头像 assets/avatar.jpg | 背景图 assets/bg.jpg | 音频 media/music.mp3");
 </script>
 </body>
 </html>
