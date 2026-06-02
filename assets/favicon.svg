@@ -1,33 +1,73 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f3a8ff"/>
-      <stop offset="50%" style="stop-color:#c084fc"/>
-      <stop offset="100%" style="stop-color:#8ab4ff"/>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1040"/>
+      <stop offset="100%" stop-color="#0a0a1a"/>
     </linearGradient>
-    <linearGradient id="grad2" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#f9a8d4"/>
-      <stop offset="100%" style="stop-color:#a78bfa"/>
+    <linearGradient id="eyeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff7eb3"/>
+      <stop offset="40%" stop-color="#ff6b8a"/>
+      <stop offset="100%" stop-color="#ff4757"/>
+    </linearGradient>
+    <linearGradient id="hairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5c3d2e"/>
+      <stop offset="100%" stop-color="#3d2518"/>
     </linearGradient>
   </defs>
-  <!-- 背景圆 -->
-  <circle cx="50" cy="50" r="48" fill="#0f0f2e" stroke="url(#grad)" stroke-width="2"/>
-  <!-- 发光光晕 -->
-  <circle cx="50" cy="50" r="38" fill="url(#grad)" opacity="0.08"/>
-  <!-- 樱花 - 五片花瓣 -->
-  <!-- 右上花瓣 -->
-  <path d="M50 22 C52 28, 58 32, 62 30 C64 28, 64 24, 60 20 C56 16, 50 16, 50 22Z" fill="url(#grad)" opacity="0.95"/>
-  <!-- 左上花瓣 -->
-  <path d="M50 22 C48 28, 42 32, 38 30 C36 28, 36 24, 40 20 C44 16, 50 16, 50 22Z" fill="url(#grad2)" opacity="0.9"/>
-  <!-- 右花瓣 -->
-  <path d="M68 40 C64 42, 62 48, 64 52 C66 54, 70 54, 72 50 C74 46, 72 40, 68 40Z" fill="url(#grad)" opacity="0.85"/>
-  <!-- 左花瓣 -->
-  <path d="M32 40 C36 42, 38 48, 36 52 C34 54, 30 54, 28 50 C26 46, 28 40, 32 40Z" fill="url(#grad2)" opacity="0.85"/>
-  <!-- 下花瓣 -->
-  <path d="M50 72 C48 66, 42 64, 38 66 C36 68, 36 72, 40 76 C44 80, 50 80, 50 72Z" fill="url(#grad)" opacity="0.9"/>
-  <!-- 花蕊 -->
-  <circle cx="50" cy="48" r="5" fill="#fce7f3" opacity="0.9"/>
-  <circle cx="50" cy="48" r="3" fill="#f9a8d4"/>
-  <!-- 光点 -->
-  <circle cx="50" cy="48" r="1.5" fill="#fff" opacity="0.8"/>
+
+  <!-- 深色圆形背景 + 柔和光晕描边 -->
+  <circle cx="50" cy="50" r="48" fill="url(#bg)"/>
+  <circle cx="50" cy="50" r="46" fill="none" stroke="#ff7eb3" stroke-width="1" opacity="0.25"/>
+
+  <!-- 后发 -->
+  <path d="M25 42 C25 16, 75 16, 75 42 L76 70 C76 82, 24 82, 24 70 Z" fill="url(#hairGrad)"/>
+
+  <!-- 脸部 -->
+  <ellipse cx="50" cy="55" rx="23" ry="25" fill="#ffddd4"/>
+
+  <!-- 腮红 -->
+  <ellipse cx="32" cy="62" rx="6" ry="3" fill="#ffb3ba" opacity="0.45"/>
+  <ellipse cx="68" cy="62" rx="6" ry="3" fill="#ffb3ba" opacity="0.45"/>
+
+  <!-- 眼睛 - 白色底 -->
+  <ellipse cx="36" cy="51" rx="9" ry="11" fill="#fff"/>
+  <ellipse cx="64" cy="51" rx="9" ry="11" fill="#fff"/>
+
+  <!-- 眼睛 - 虹膜 (珊瑚粉渐变) -->
+  <ellipse cx="36" cy="51" rx="8" ry="10" fill="url(#eyeGrad)"/>
+  <ellipse cx="64" cy="51" rx="8" ry="10" fill="url(#eyeGrad)"/>
+
+  <!-- 眼睛 - 主高光 -->
+  <ellipse cx="34" cy="47.5" rx="3.5" ry="4.5" fill="#fff" opacity="0.9"/>
+  <ellipse cx="62" cy="47.5" rx="3.5" ry="4.5" fill="#fff" opacity="0.9"/>
+
+  <!-- 眼睛 - 副高光 -->
+  <circle cx="38.5" cy="55" r="2" fill="#fff" opacity="0.55"/>
+  <circle cx="66.5" cy="55" r="2" fill="#fff" opacity="0.55"/>
+
+  <!-- 眼睛 - 上眼线 -->
+  <path d="M26 49 Q36 40 46 49" fill="none" stroke="#4a3028" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M54 49 Q64 40 74 49" fill="none" stroke="#4a3028" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- 嘴巴 - 微笑 -->
+  <path d="M46 67 Q50 70 54 67" fill="none" stroke="#c4726e" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- 前刘海 -->
+  <path d="M27 42 C29 26, 36 24, 40 30 C42 33, 44 27, 48 24 C50 23, 52 23, 55 26 C58 30, 60 33, 62 30 C66 24, 73 26, 75 42 L73 48 C68 44, 56 42, 50 44 C44 42, 32 44, 27 48 Z" fill="url(#hairGrad)"/>
+
+  <!-- 左侧发 -->
+  <path d="M27 40 C25 50, 26 60, 27 68 C28 72, 25 44, 27 40Z" fill="url(#hairGrad)"/>
+
+  <!-- 右侧发 -->
+  <path d="M73 40 C75 50, 74 60, 73 68 C72 72, 75 44, 73 40Z" fill="url(#hairGrad)"/>
+
+  <!-- 头顶蝴蝶结 -->
+  <path d="M50 15 C43 10, 36 15, 40 22 C44 27, 50 18, 50 15Z" fill="#ff7eb3"/>
+  <path d="M50 15 C57 10, 64 15, 60 22 C56 27, 50 18, 50 15Z" fill="#ff6b8a"/>
+  <circle cx="50" cy="16" r="3.5" fill="#ff9eb5"/>
+  <circle cx="50" cy="16" r="1.5" fill="#fff" opacity="0.5"/>
+
+  <!-- ✦ 装饰星光 -->
+  <circle cx="78" cy="24" r="2" fill="#ff7eb3" opacity="0.5"/>
+  <circle cx="22" cy="30" r="1.5" fill="#ff9eb5" opacity="0.35"/>
 </svg>
